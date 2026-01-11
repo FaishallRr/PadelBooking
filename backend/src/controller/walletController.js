@@ -32,7 +32,7 @@ export const getMyWallet = async (req, res) => {
     // Kalau belum ada wallet, buat baru
     if (!wallet) {
       wallet = await prisma.wallet_user.create({
-        data: { user_id: userId, saldo: 0 },
+        data: { user_id: userId, saldo: 500000 },
         include: {
           history: true,
         },
