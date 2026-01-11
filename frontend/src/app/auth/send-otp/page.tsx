@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import axios, { AxiosError } from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import localFont from "next/font/local";
 
-// Load local fonts
+/* ================= FONT ================= */
 const PoppinsRegular = localFont({
   src: "../../../fonts/Poppins-Regular.ttf",
 });
@@ -13,7 +13,7 @@ const PoppinsBold = localFont({
   src: "../../../fonts/Poppins-Bold.ttf",
 });
 
-// 🔔 Notification Modal
+/* ================= NOTIFICATION ================= */
 function Notification({
   type,
   message,
@@ -23,8 +23,7 @@ function Notification({
 }) {
   return (
     <div className="fixed inset-0 flex items-center justify-center z-[999]">
-      <div className="absolute inset-0 bg-black/15 backdrop-blur-[1px]"></div>
-
+      <div className="absolute inset-0 bg-black/15 backdrop-blur-[1px]" />
       <div className="relative bg-white px-8 py-6 rounded-2xl shadow-xl w-[85%] max-w-md text-center animate-fadeIn">
         <div className="flex flex-col items-center gap-3">
           <div
@@ -33,7 +32,6 @@ function Notification({
           >
             {type === "success" ? "✓" : "!"}
           </div>
-
           <p className="text-gray-600 text-lg font-semibold">{message}</p>
         </div>
       </div>
@@ -41,18 +39,14 @@ function Notification({
   );
 }
 
-export default function SendOtpPage() {
+/* ================= CONTENT (AMAN UNTUK useSearchParams) ================= */
+function SendOtpContent() {
   const router = useRouter();
   const params = useSearchParams();
 
-  // 📌 Ambil role dari query (default user)
   const role = params.get("role") || "user";
 
-  // 📌 Step dynamic
-  const steps =
-    role === "mitra"
-      ? ["Email", "Verifikasi", "Data Diri"]
-      : ["Email", "Verifikasi", "Data Diri"];
+  const steps = ["Email", "Verifikasi", "Data Diri"];
 
   const [email, setEmail] = useState("");
   const [notif, setNotif] = useState<{
@@ -71,7 +65,7 @@ export default function SendOtpPage() {
     try {
       await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/send-otp`, {
         email,
-        role, // ⭐ tetap aman, logic backend tidak berubah
+        role,
       });
 
       showNotif("success", "OTP berhasil dikirim!");
@@ -98,11 +92,10 @@ export default function SendOtpPage() {
       {notif && <Notification type={notif.type} message={notif.message} />}
 
       <div className="bg-white w-full max-w-lg rounded-2xl shadow-md p-10">
-        {/* Stepper Dynamic */}
+        {/* STEPPER */}
         <div className="flex items-center justify-center gap-4 mb-10">
           {steps.map((label, index) => {
             const active = index === 0;
-
             return (
               <div key={index} className="flex items-center gap-4">
                 <div className="flex flex-col items-center">
@@ -116,7 +109,6 @@ export default function SendOtpPage() {
                   >
                     {index + 1}
                   </div>
-
                   <p
                     className={`text-sm mt-1 font-medium ${
                       active ? "text-[var(--color-primary)]" : "text-gray-500"
@@ -125,9 +117,8 @@ export default function SendOtpPage() {
                     {label}
                   </p>
                 </div>
-
                 {index < steps.length - 1 && (
-                  <div className="w-8 h-0.5 bg-gray-300"></div>
+                  <div className="w-8 h-0.5 bg-gray-300" />
                 )}
               </div>
             );
@@ -151,9 +142,9 @@ export default function SendOtpPage() {
             </label>
             <input
               type="email"
-              className={`w-full pl-4 p-2 rounded-xl border border-gray-300 text-gray-700 
+              className="w-full pl-4 p-2 rounded-xl border border-gray-300 text-gray-700 
                 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]
-                transition-all duration-300 text-[15px] font-medium mt-2`}
+                transition-all duration-300 text-[15px] font-medium mt-2"
               placeholder="Masukkan alamat email Anda"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -186,6 +177,31 @@ export default function SendOtpPage() {
           </span>
         </p>
       </div>
+
+      <style jsx global>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: scale(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+        .animate-fadeIn {
+          animation: fadeIn 0.25s ease-out;
+        }
+      `}</style>
     </div>
+  );
+}
+
+/* ================= SUSPENSE WRAPPER (WAJIB VERCEL) ================= */
+export default function SendOtpPage() {
+  return (
+    <Suspense fallback={<div />}>
+      <SendOtpContent />
+    </Suspense>
   );
 }
