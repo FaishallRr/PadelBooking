@@ -1,12 +1,10 @@
-"use client";
+import { Suspense } from "react";
+import TambahLapanganClient from "./TambahLapanganClient";
 
-import { useSearchParams } from "next/navigation";
-import LapanganForm from "./LapanganForm";
-
-export default function TambahLapanganPage() {
-  const searchParams = useSearchParams();
-  const slug = searchParams.get("slug"); // ambil ?slug=xxx jika edit
-  const mode = slug ? "edit" : "tambah";
-
-  return <LapanganForm mode={mode} slug={slug ?? undefined} />;
+export default function Page() {
+  return (
+    <Suspense fallback={<div />}>
+      <TambahLapanganClient />
+    </Suspense>
+  );
 }
