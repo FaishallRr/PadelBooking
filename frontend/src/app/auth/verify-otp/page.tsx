@@ -212,13 +212,20 @@ export default function VerifyOtpPage() {
                 onChange={(e) => handleChange(i, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(i, e)}
                 className={`w-12 h-12 text-center text-xl text-gray-700 border rounded-xl outline-none transition-all duration-200
-                  ${
-                    otpState === "error"
-                      ? "border-red-500 ring-1 ring-red-500"
-                      : otpState === "success"
-                      ? "border-green-500 ring-1 ring-green-500"
-                      : "border-gray-300 focus:ring-1 focus:ring-[var(--color-primary)]"
-                  }`}
+  ${
+    otpState === "error"
+      ? "border-red-500 ring-1 ring-red-500"
+      : otpState === "success"
+      ? "border-green-500 ring-1 ring-green-500"
+      : "border-gray-300 focus:ring-2"
+  }`}
+                style={
+                  otpState === "normal"
+                    ? ({
+                        "--tw-ring-color": "var(--color-primary)",
+                      } as React.CSSProperties)
+                    : undefined
+                }
               />
             ))}
           </div>
@@ -241,43 +248,6 @@ export default function VerifyOtpPage() {
           </button>
         </div>
       </div>
-
-      <style jsx global>{`
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-        .animate-fadeIn {
-          animation: fadeIn 0.25s ease-out;
-        }
-
-        @keyframes shake {
-          0% {
-            transform: translateX(0);
-          }
-          25% {
-            transform: translateX(-4px);
-          }
-          50% {
-            transform: translateX(4px);
-          }
-          75% {
-            transform: translateX(-4px);
-          }
-          100% {
-            transform: translateX(0);
-          }
-        }
-        .animate-shake {
-          animation: shake 0.3s ease-in-out;
-        }
-      `}</style>
     </div>
   );
 }

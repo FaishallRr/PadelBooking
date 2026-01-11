@@ -142,7 +142,12 @@ function SendOtpContent() {
             </label>
             <input
               type="email"
-              className="w-full pl-4 p-2 rounded-xl border border-gray-300 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-all duration-300 text-[15px] font-medium mt-2"
+              className="w-full pl-4 p-2 rounded-xl border border-gray-300 text-gray-700 focus:outline-none focus:ring-2 transition-all duration-300 text-[15px] font-medium mt-2"
+              style={
+                {
+                  "--tw-ring-color": "var(--color-primary)",
+                } as React.CSSProperties
+              }
               placeholder="Masukkan alamat email Anda"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -152,12 +157,12 @@ function SendOtpContent() {
           <button
             type="submit"
             className="w-full text-white font-semibold py-2.5 rounded-xl transition-all duration-300"
-            style={{ background: "var(--color-primary)" }}
+            style={{ backgroundColor: "var(--color-primary)" }}
             onMouseEnter={(e) =>
-              (e.currentTarget.style.background = "var(--color-hover)")
+              (e.currentTarget.style.backgroundColor = "var(--color-hover)")
             }
             onMouseLeave={(e) =>
-              (e.currentTarget.style.background = "var(--color-primary)")
+              (e.currentTarget.style.backgroundColor = "var(--color-primary)")
             }
           >
             Lanjutkan
@@ -176,21 +181,7 @@ function SendOtpContent() {
         </p>
       </div>
 
-      <style jsx global>{`
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-        .animate-fadeIn {
-          animation: fadeIn 0.25s ease-out;
-        }
-      `}</style>
+
     </div>
   );
 }
