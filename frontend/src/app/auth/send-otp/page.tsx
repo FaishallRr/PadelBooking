@@ -142,9 +142,7 @@ function SendOtpContent() {
             </label>
             <input
               type="email"
-              className="w-full pl-4 p-2 rounded-xl border border-gray-300 text-gray-700 
-                focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]
-                transition-all duration-300 text-[15px] font-medium mt-2"
+              className="w-full pl-4 p-2 rounded-xl border border-gray-300 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-all duration-300 text-[15px] font-medium mt-2"
               placeholder="Masukkan alamat email Anda"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
