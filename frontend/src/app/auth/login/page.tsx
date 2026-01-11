@@ -152,8 +152,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Masukkan email Anda"
-              className="w-full pl-4 p-2 rounded-xl border border-gray-300 mt-2 text-[15px] text-gray-700  focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]
-                transition-all duration-300"
+              className="w-full pl-4 p-2 rounded-xl border border-gray-300 mt-2 text-[15px] text-gray-700  focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-all duration-300"
             />
           </div>
 
@@ -167,8 +166,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Masukkan password"
-                className="w-full pl-4 pr-12 p-2 rounded-xl border border-gray-300 text-[15px] text-gray-700  focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]
-                transition-all duration-300"
+                className="w-full pl-4 pr-12 p-2 rounded-xl border border-gray-300 text-[15px] text-gray-700  focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-all duration-300"
               />
               <FontAwesomeIcon
                 icon={showPassword ? faEye : faEyeSlash}

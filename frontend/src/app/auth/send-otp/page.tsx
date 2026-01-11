@@ -151,9 +151,9 @@ export default function SendOtpPage() {
             </label>
             <input
               type="email"
-              className="w-full pl-4 p-2 rounded-xl border border-gray-300 text-gray-700 
+              className={`w-full pl-4 p-2 rounded-xl border border-gray-300 text-gray-700 
                 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]
-                transition-all duration-300 text-[15px] font-medium mt-2"
+                transition-all duration-300 text-[15px] font-medium mt-2`}
               placeholder="Masukkan alamat email Anda"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -186,22 +186,6 @@ export default function SendOtpPage() {
           </span>
         </p>
       </div>
-
-      <style jsx global>{`
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-        .animate-fadeIn {
-          animation: fadeIn 0.25s ease-out;
-        }
-      `}</style>
     </div>
   );
 }
