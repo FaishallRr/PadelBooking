@@ -202,8 +202,9 @@ function VerifyOtpContent() {
               <input
                 key={i}
                 ref={(el) => {
-                  inputsRef.current[i] = el;
+                  inputsRef.current[i] = el; // ✅ pakai i
                 }}
+                type="text"
                 value={v}
                 maxLength={1}
                 onChange={(e) => handleChange(i, e.target.value)}
