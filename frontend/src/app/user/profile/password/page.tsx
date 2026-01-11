@@ -62,7 +62,7 @@ export default function PasswordPage() {
   const onSubmit = async (values: any) => {
     try {
       await axios.put(
-        "http://localhost:5000/auth/profile/password",
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/profile/password`,
         {
           oldPassword: values.oldPassword,
           newPassword: values.newPassword,

@@ -31,18 +31,21 @@ export default function PaymentPage() {
     const createOrder = async () => {
       try {
         const token = Cookies.get("token");
-        const res = await fetch("http://localhost:5000/api/booking", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            lapangan_id: parsedCart[0].lapanganId,
-            jadwalLapanganId: parsedCart[0].jadwalId,
-            total_harga: Number(checkoutTotal),
-          }),
-        });
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/booking`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              lapangan_id: parsedCart[0].lapanganId,
+              jadwalLapanganId: parsedCart[0].jadwalId,
+              total_harga: Number(checkoutTotal),
+            }),
+          }
+        );
         const data = await res.json();
         if (!res.ok) throw new Error(data.message);
         setOrderId(data.data.order.id);
@@ -57,9 +60,12 @@ export default function PaymentPage() {
     const fetchWallet = async () => {
       try {
         const token = Cookies.get("token");
-        const res = await fetch("http://localhost:5000/api/wallet/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/wallet/me`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         const data = await res.json();
         if (res.ok) setSaldo(Number(data.saldo));
       } catch (err) {
@@ -85,14 +91,17 @@ export default function PaymentPage() {
     setIsPaying(true);
     try {
       const token = Cookies.get("token");
-      const res = await fetch("http://localhost:5000/api/checkout/wallet", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ order_id: orderId }),
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/checkout/wallet`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ order_id: orderId }),
+        }
+      );
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Pembayaran gagal");
 

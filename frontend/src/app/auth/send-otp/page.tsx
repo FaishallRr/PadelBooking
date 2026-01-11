@@ -69,7 +69,7 @@ export default function SendOtpPage() {
     e.preventDefault();
 
     try {
-      await axios.post("http://localhost:5000/auth/send-otp", {
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/send-otp`, {
         email,
         role, // ⭐ tetap aman, logic backend tidak berubah
       });

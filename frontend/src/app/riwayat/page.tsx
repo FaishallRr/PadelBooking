@@ -91,9 +91,12 @@ export default function WalletTab() {
       if (!token) throw new Error("Silakan login terlebih dahulu");
 
       // Wallet
-      const resWallet = await fetch("http://localhost:5000/api/wallet/me", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const resWallet = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/wallet/me`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       const walletData = await resWallet.json();
       setSaldo(Number(walletData.saldo) || 0);
 
@@ -111,9 +114,12 @@ export default function WalletTab() {
       );
 
       // Refund
-      const resRefund = await fetch("http://localhost:5000/api/refund/me", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const resRefund = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/refund/me`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       const refundData = await resRefund.json();
       const refundHistory: WalletHistory[] = (refundData.history || []).map(
         (r: any) => ({
@@ -176,14 +182,17 @@ export default function WalletTab() {
       const token = Cookies.get("token");
       if (!token) throw new Error("Silakan login terlebih dahulu");
 
-      const res = await fetch("http://localhost:5000/api/refund/cancel", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ refund_id: refundId }),
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/refund/cancel`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ refund_id: refundId }),
+        }
+      );
       if (!res.ok) throw new Error("Gagal membatalkan refund");
 
       fetchWallet();
@@ -227,7 +236,7 @@ export default function WalletTab() {
       const token = Cookies.get("token");
       if (!token) throw new Error("Silakan login terlebih dahulu");
 
-      const res = await fetch("http://localhost:5000/api/refund", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/refund`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import axios, { AxiosError } from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import localFont from "next/font/local";
@@ -20,7 +20,7 @@ const PoppinsBold = localFont({
   variable: "--font-poppins",
 });
 
-export default function RegisterPage() {
+function RegisterContent() {
   const router = useRouter();
   const params = useSearchParams();
 
@@ -67,7 +67,7 @@ export default function RegisterPage() {
     }
 
     try {
-      await axios.post("http://localhost:5000/auth/register", {
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
         email,
         nama: name,
         username,
@@ -374,5 +374,16 @@ export default function RegisterPage() {
         }
       `}</style>
     </div>
+  );
+}
+
+/* =========================
+   DEFAULT EXPORT (WAJIB)
+   ========================= */
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<div />}>
+      <RegisterContent />
+    </Suspense>
   );
 }

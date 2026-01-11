@@ -85,10 +85,13 @@ export default function LoginPage() {
     }
 
     try {
-      const res = await axios.post("http://localhost:5000/auth/login", {
-        email,
-        password,
-      });
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+        {
+          email,
+          password,
+        }
+      );
 
       // SIMPAN TOKEN + ROLE DI COOKIE
       Cookies.set("token", res.data.token, { expires: 7 });

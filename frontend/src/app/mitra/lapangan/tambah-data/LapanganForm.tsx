@@ -73,7 +73,7 @@ export default function LapanganForm({ mode, slug }: LapanganFormProps) {
         if (!token) throw new Error("Token tidak ditemukan");
 
         const backendRes = await fetch(
-          `http://localhost:5000/api/lapangan/mitra/lapangan/${slug}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/api/lapangan/mitra/lapangan/${slug}`,
           {
             headers: { Authorization: `Bearer ${token}` },
             cache: "no-store",
@@ -113,7 +113,7 @@ export default function LapanganForm({ mode, slug }: LapanganFormProps) {
         }
 
         const serverImages: ServerImage[] = allImages.map((url: string) => ({
-          url: `http://localhost:5000${url}`,
+          url: `${process.env.NEXT_PUBLIC_API_URL}${url}`,
         }));
 
         setServerPreviews(serverImages);
@@ -313,8 +313,8 @@ export default function LapanganForm({ mode, slug }: LapanganFormProps) {
       // Request ke backend
       // =====================
       const url = isEdit
-        ? `http://localhost:5000/api/lapangan/mitra/lapangan/${slug}`
-        : "http://localhost:5000/api/lapangan/mitra/lapangan/tambah-data";
+        ? `${process.env.NEXT_PUBLIC_API_URL}/api/lapangan/mitra/lapangan/${slug}`
+        : `${process.env.NEXT_PUBLIC_API_URL}/api/lapangan/mitra/lapangan/tambah-data`;
 
       const method = isEdit ? "PUT" : "POST";
 

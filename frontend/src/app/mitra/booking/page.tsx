@@ -183,12 +183,15 @@ export default function MitraDashboard() {
         const token = Cookies.get("token");
         if (!token) throw new Error("Token tidak ditemukan");
 
-        const res = await fetch("http://localhost:5000/api/mitra/booking", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          cache: "no-store",
-        });
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/mitra/booking`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            cache: "no-store",
+          }
+        );
 
         const result = await res.json();
         if (!res.ok) throw new Error(result.message);
@@ -211,7 +214,7 @@ export default function MitraDashboard() {
         if (!token) throw new Error("Token tidak ditemukan");
 
         const res = await fetch(
-          "http://localhost:5000/api/mitra/revenue-chart",
+          `${process.env.NEXT_PUBLIC_API_URL}/api/mitra/revenue-chart`,
           {
             headers: { Authorization: `Bearer ${token}` },
             cache: "no-store",
@@ -245,7 +248,7 @@ export default function MitraDashboard() {
         if (!token) throw new Error("Token tidak ditemukan");
 
         const res = await fetch(
-          "http://localhost:5000/api/lapangan/mitra/lapangan",
+          `${process.env.NEXT_PUBLIC_API_URL}/api/lapangan/mitra/lapangan`,
           { headers: { Authorization: `Bearer ${token}` }, cache: "no-store" }
         );
 
@@ -259,7 +262,7 @@ export default function MitraDashboard() {
           gambar: lap.gambar
             ? lap.gambar.startsWith("http")
               ? lap.gambar
-              : `http://localhost:5000/img/lapangan/${lap.gambar}`
+              : `${process.env.NEXT_PUBLIC_API_URL}/img/lapangan/${lap.gambar}`
             : null,
           type: lap.type ?? lap.detail?.type ?? null,
           facilities: lap.detail?.fasilitas ?? [],
@@ -286,12 +289,15 @@ export default function MitraDashboard() {
         const token = Cookies.get("token");
         if (!token) throw new Error("Token tidak ditemukan");
 
-        const res = await fetch("http://localhost:5000/api/mitra/dashboard", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          cache: "no-store",
-        });
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/mitra/dashboard`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            cache: "no-store",
+          }
+        );
 
         const result = await res.json();
         if (!res.ok) throw new Error(result.message);
@@ -320,7 +326,7 @@ export default function MitraDashboard() {
       if (!token) throw new Error("Token tidak ditemukan");
 
       const res = await fetch(
-        `http://localhost:5000/api/lapangan/mitra/lapangan/${slug}/toggle-status`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/lapangan/mitra/lapangan/${slug}/toggle-status`,
         {
           method: "PATCH",
           headers: {
@@ -364,7 +370,7 @@ export default function MitraDashboard() {
       if (!token) throw new Error("Token tidak ditemukan");
 
       const res = await fetch(
-        `http://localhost:5000/api/lapangan/mitra/lapangan/${slug}/status`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/lapangan/mitra/lapangan/${slug}/status`,
         {
           method: "PATCH",
           headers: {
@@ -396,7 +402,7 @@ export default function MitraDashboard() {
       if (!token) throw new Error("Token tidak ditemukan");
 
       const res = await fetch(
-        `http://localhost:5000/api/lapangan/mitra/lapangan/${slug}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/lapangan/mitra/lapangan/${slug}`,
         { method: "DELETE", headers: { Authorization: `Bearer ${token}` } }
       );
 

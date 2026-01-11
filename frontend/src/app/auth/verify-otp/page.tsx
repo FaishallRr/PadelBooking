@@ -91,7 +91,10 @@ export default function VerifyOtpPage() {
 
   const handleResendOtp = async () => {
     try {
-      await axios.post("http://localhost:5000/auth/send-otp", { email, role });
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/send-otp`, {
+        email,
+        role,
+      });
 
       showNotif("success", "OTP baru telah dikirim!");
     } catch (error) {
@@ -106,7 +109,7 @@ export default function VerifyOtpPage() {
     const otp = otpValues.join("");
 
     try {
-      await axios.post("http://localhost:5000/auth/verify-otp", {
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/verify-otp`, {
         email,
         otp,
         role,

@@ -234,7 +234,7 @@ export default function DataMitraForm() {
       const token = Cookies.get("token");
 
       const res = await axios.post(
-        "http://localhost:5000/auth/register-mitra",
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/register-mitra`,
         fd,
         {
           withCredentials: true,

@@ -71,10 +71,13 @@ export default function AdminRefundPage() {
         if (!token) throw new Error("Token tidak ditemukan");
 
         setLoading(true);
-        const res = await fetch("http://localhost:5000/api/refund/admin", {
-          headers: { Authorization: `Bearer ${token}` },
-          cache: "no-store",
-        });
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/refund/admin`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+            cache: "no-store",
+          }
+        );
 
         if (!res.ok) throw new Error("Gagal fetch refund");
         const data = await res.json();
@@ -106,14 +109,17 @@ export default function AdminRefundPage() {
       const token = Cookies.get("token");
       if (!token) throw new Error("Token tidak ditemukan");
 
-      const res = await fetch("http://localhost:5000/api/refund/approve", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ refund_id: id }),
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/refund/approve`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ refund_id: id }),
+        }
+      );
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Gagal approve refund");

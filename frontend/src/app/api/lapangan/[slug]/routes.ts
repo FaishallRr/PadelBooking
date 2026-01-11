@@ -13,7 +13,7 @@ export async function GET(
 
     // Ambil dari backend EXPRESS
     const backendRes = await fetch(
-      `http://localhost:5000/api/lapangan/${slug}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/lapangan/${slug}`,
       { cache: "no-store" }
     );
 

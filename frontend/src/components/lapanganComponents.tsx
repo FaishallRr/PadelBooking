@@ -61,7 +61,9 @@ const LapanganComponents: React.FC<LapanganComponentsProps> = ({ filters }) => {
   useEffect(() => {
     const fetchLapangan = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/lapangan");
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/lapangan`
+        );
         const data: LapanganAPI[] = await res.json();
 
         const mappedData: Lapangan[] = data.map((lap) => {
@@ -70,7 +72,7 @@ const LapanganComponents: React.FC<LapanganComponentsProps> = ({ filters }) => {
           if (lap.gambar) {
             imageUrl = lap.gambar.startsWith("http")
               ? lap.gambar
-              : `http://localhost:5000${lap.gambar}`;
+              : `${process.env.NEXT_PUBLIC_API_URL}${lap.gambar}`;
           }
 
           return {

@@ -64,9 +64,12 @@ export default function ProfilePage() {
           return;
         }
 
-        const res = await axios.get("http://localhost:5000/auth/profile", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/auth/profile`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
 
         const data = res.data;
 
@@ -78,7 +81,9 @@ export default function ProfilePage() {
 
         // 📌 SET FOTO dari backend
         if (data.foto) {
-          setPreview(`http://localhost:5000/img/user/${data.foto}`);
+          setPreview(
+            `${process.env.NEXT_PUBLIC_API_URL}/img/user/${data.foto}`
+          );
         } else {
           setPreview(null);
         }
@@ -113,7 +118,7 @@ export default function ProfilePage() {
       }
 
       const res = await axios.put(
-        "http://localhost:5000/auth/update-profile",
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/update-profile`,
         fd,
         {
           headers: {
@@ -125,7 +130,9 @@ export default function ProfilePage() {
 
       // 📌 UPDATE FOTO DI FE SETELAH UPDATE
       if (res.data.profile?.foto) {
-        setPreview(`http://localhost:5000/img/user/${res.data.profile.foto}`);
+        setPreview(
+          `${process.env.NEXT_PUBLIC_API_URL}/img/user/${res.data.profile.foto}`
+        );
       }
 
       showPopup("Profil berhasil diperbarui!", "success");

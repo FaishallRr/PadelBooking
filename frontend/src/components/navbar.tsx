@@ -84,11 +84,14 @@ export default function Navbar({ largeText }: NavbarProps) {
 
     const fetchWallet = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/wallet/me", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/wallet/me`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (!res.ok) throw new Error("Gagal ambil wallet");
 

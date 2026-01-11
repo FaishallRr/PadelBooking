@@ -131,11 +131,14 @@ export default function AdminDashboardPage() {
         if (!token) throw new Error("Token tidak ditemukan");
 
         const [summaryRes, lapanganRes] = await Promise.all([
-          fetch("http://localhost:5000/api/admin/dashboard/summary", {
-            headers: { Authorization: `Bearer ${token}` },
-            cache: "no-store",
-          }),
-          fetch("http://localhost:5000/api/admin/lapangan", {
+          fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/api/admin/dashboard/summary`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+              cache: "no-store",
+            }
+          ),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/lapangan`, {
             headers: { Authorization: `Bearer ${token}` },
             cache: "no-store",
           }),
@@ -157,7 +160,7 @@ export default function AdminDashboardPage() {
             nama: lap.nama,
             status: lap.status,
             gambar: lap.gambar
-              ? `http://localhost:5000/img/lapangan/${lap.gambar}`
+              ? `${process.env.NEXT_PUBLIC_API_URL}/img/lapangan/${lap.gambar}`
               : null,
             type: lap.type ?? lap.detail?.type ?? null,
             facilities: lap.detail?.fasilitas ?? [],
@@ -180,7 +183,7 @@ export default function AdminDashboardPage() {
       if (!token) throw new Error("Token tidak ditemukan");
 
       const res = await fetch(
-        `http://localhost:5000/api/admin/lapangan/${slug}/toggle-status`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/admin/lapangan/${slug}/toggle-status`,
         {
           method: "PATCH",
           headers: {
@@ -211,7 +214,7 @@ export default function AdminDashboardPage() {
       if (!token) throw new Error("Token tidak ditemukan");
 
       const res = await fetch(
-        `http://localhost:5000/api/admin/lapangan/${slug}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/admin/lapangan/${slug}`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },

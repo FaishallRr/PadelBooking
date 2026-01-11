@@ -22,11 +22,14 @@ export const useWalletStore = create<WalletStore>((set) => ({
       const token = Cookies.get("token");
       if (!token) return;
 
-      const res = await axios.get("http://localhost:5000/api/wallet/me", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/wallet/me`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       set({ wallet: res.data });
     } catch (err) {

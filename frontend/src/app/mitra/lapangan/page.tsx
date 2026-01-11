@@ -57,7 +57,7 @@ export default function LapanganPage() {
         }
 
         const res = await fetch(
-          "http://localhost:5000/api/lapangan/mitra/lapangan",
+          `${process.env.NEXT_PUBLIC_API_URL}/api/lapangan/mitra/lapangan`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -268,7 +268,7 @@ export default function LapanganPage() {
                   {/* GAMBAR */}
                   {lap.gambar ? (
                     <img
-                      src={`http://localhost:5000/img/lapangan/${lap.gambar}`}
+                      src={`${process.env.NEXT_PUBLIC_API_URL}/img/lapangan/${lap.gambar}`}
                       alt={lap.nama}
                       className="w-full h-48 object-contain rounded-t-2xl"
                     />
