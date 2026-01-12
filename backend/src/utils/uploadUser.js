@@ -1,47 +1,22 @@
 // src/utils/uploadUser.js
 import multer from "multer";
-import path from "path";
-import fs from "fs";
 import crypto from "crypto";
+import path from "path";
 
-const USER_PATH = path.join(process.cwd(), "public", "img", "user");
-if (!fs.existsSync(USER_PATH)) fs.mkdirSync(USER_PATH, { recursive: true });
+/**
+ * =========================
+ * STORAGE (SERVERLESS SAFE)
+ * =========================
+ * File disimpan di memory (RAM)
+ * Tidak ada fs / mkdir / disk write
+ */
+const storage = multer.memoryStorage();
 
-const KTP_PATH = path.join(process.cwd(), "public", "img", "mitra", "ktp");
-if (!fs.existsSync(KTP_PATH)) fs.mkdirSync(KTP_PATH, { recursive: true });
-
-const storageMitra = multer.diskStorage({
-  destination: (req, file, cb) => {
-    if (file.fieldname === "ktp") cb(null, KTP_PATH);
-    else cb(null, path.join(process.cwd(), "public", "uploads"));
-  },
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    const uid = crypto.randomUUID();
-    cb(null, `ktp_${uid}_${Date.now()}${ext}`);
-  },
-});
-
-// storage untuk upload single user foto
-const storageUser = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, USER_PATH),
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    const id = req.user?.id ?? "temp";
-    cb(null, `user_${id}_${Date.now()}${ext}`);
-  },
-});
-
-// storage untuk upload ktp
-const storageKtp = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, KTP_PATH),
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    const uid = crypto.randomUUID();
-    cb(null, `ktp_${uid}_${Date.now()}${ext}`);
-  },
-});
-
+/**
+ * =========================
+ * FILE FILTER (LOGIC TETAP)
+ * =========================
+ */
 function fileFilter(req, file, cb) {
   if (!file.mimetype.startsWith("image/")) {
     return cb(new Error("Only image uploads are allowed"));
@@ -49,21 +24,71 @@ function fileFilter(req, file, cb) {
   cb(null, true);
 }
 
+/**
+ * =========================
+ * HELPER BUAT NAMA FILE
+ * (LOGIC TETAP ADA)
+ * =========================
+ */
+function generateFilename(prefix, originalname, userId = "temp") {
+  const ext = path.extname(originalname);
+  const uid = crypto.randomUUID();
+  return `${prefix}_${userId}_${uid}_${Date.now()}${ext}`;
+}
+
+/**
+ * =========================
+ * UPLOAD USER PHOTO
+ * =========================
+ */
 export const uploadUser = multer({
-  storage: storageUser,
+  storage,
   fileFilter,
-  limits: { fileSize: 10 * 1024 * 1024 },
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB
+  },
 });
 
+/**
+ * =========================
+ * UPLOAD KTP
+ * =========================
+ */
 export const uploadKtp = multer({
-  storage: storageKtp,
+  storage,
   fileFilter,
-  limits: { fileSize: 10 * 1024 * 1024 },
+  limits: {
+    fileSize: 10 * 1024 * 1024,
+  },
 });
 
-// Untuk register-mitra — menerima fields foto (user) + ktp (mitra)
+/**
+ * =========================
+ * UPLOAD MITRA
+ * (USER + KTP)
+ * =========================
+ */
 export const uploadMitra = multer({
-  storage: storageMitra,
+  storage,
   fileFilter,
-  limits: { fileSize: 10 * 1024 * 1024 },
+  limits: {
+    fileSize: 10 * 1024 * 1024,
+  },
 });
+
+/**
+ * =========================
+ * EXPORT HELPER (OPTIONAL)
+ * Dipakai di controller
+ * =========================
+ */
+export function mapUploadedFile(file, type, userId) {
+  if (!file) return null;
+
+  return {
+    buffer: file.buffer, // ← buat Cloudinary
+    mimetype: file.mimetype,
+    originalname: file.originalname,
+    filename: generateFilename(type, file.originalname, userId),
+  };
+}
