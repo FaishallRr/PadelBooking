@@ -2,24 +2,16 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 
-// Tentukan folder tempat menyimpan gambar lapangan
-const LAPANGAN_IMG = path.join(process.cwd(), "public", "img", "lapangan");
+const TMP_DIR = path.join("/tmp", "img", "lapangan");
 
-// Pastikan folder ada, buat recursive jika belum ada
-try {
-  if (!fs.existsSync(LAPANGAN_IMG)) {
-    fs.mkdirSync(LAPANGAN_IMG, { recursive: true });
-    console.log(`Folder created: ${LAPANGAN_IMG}`);
-  }
-} catch (err) {
-  console.error("Failed to create folder:", err);
+// Pastikan folder tmp ada
+if (!fs.existsSync(TMP_DIR)) {
+  fs.mkdirSync(TMP_DIR, { recursive: true });
 }
 
 // Konfigurasi storage multer
 const storageLapangan = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, LAPANGAN_IMG);
-  },
+  destination: (req, file, cb) => cb(null, TMP_DIR),
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname).toLowerCase();
     const id = req.params.id ?? "temp";
@@ -39,7 +31,6 @@ function fileFilter(req, file, cb) {
   cb(null, true);
 }
 
-// Export multer upload
 export const uploadLapangan = multer({
   storage: storageLapangan,
   limits: { fileSize: 10 * 1024 * 1024 }, // max 10MB
