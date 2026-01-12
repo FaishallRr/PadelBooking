@@ -1,36 +1,30 @@
-// src/middleware/uploadLapangan.js
 import multer from "multer";
-import cloudinary from "../config/cloudinary.js";
-import { Readable } from "stream";
+import path from "path";
+import fs from "fs";
 
-// Multer memory storage (file ada di buffer, tidak disimpan lokal)
-const storage = multer.memoryStorage();
+// Folder lapangan
+const LAPANGAN_IMG = path.join(process.cwd(), "public", "img", "lapangan");
+if (!fs.existsSync(LAPANGAN_IMG))
+  fs.mkdirSync(LAPANGAN_IMG, { recursive: true });
 
-export const uploadLapangan = multer({
-  storage,
-  limits: { fileSize: 10 * 1024 * 1024 }, // max 10MB
-  fileFilter: (req, file, cb) => {
-    if (!file.mimetype.startsWith("image/")) {
-      return cb(new Error("Only image uploads are allowed"));
-    }
-    cb(null, true);
+const storageLapangan = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, LAPANGAN_IMG),
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname).toLowerCase();
+    const id = req.params.id ?? "temp";
+    cb(null, `lapangan_${id}_${Date.now()}${ext}`);
   },
 });
 
-// Helper upload buffer ke Cloudinary
-export const uploadToCloudinary = (fileBuffer, folder = "lapangan") => {
-  return new Promise((resolve, reject) => {
-    const stream = cloudinary.uploader.upload_stream(
-      { folder },
-      (error, result) => {
-        if (error) reject(error);
-        else resolve(result.secure_url);
-      }
-    );
+function fileFilter(req, file, cb) {
+  if (!file.mimetype.startsWith("image/")) {
+    return cb(new Error("Only image uploads are allowed"));
+  }
+  cb(null, true);
+}
 
-    const readable = new Readable();
-    readable.push(fileBuffer);
-    readable.push(null);
-    readable.pipe(stream);
-  });
-};
+export const uploadLapangan = multer({
+  storage: storageLapangan,
+  limits: { fileSize: 10 * 1024 * 1024 },
+  fileFilter,
+});
