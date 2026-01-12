@@ -6,14 +6,10 @@ const TMP_DIR = "/tmp/lapangan";
 
 const storageLapangan = multer.diskStorage({
   destination: (req, file, cb) => {
-    try {
-      if (!fs.existsSync(TMP_DIR)) {
-        fs.mkdirSync(TMP_DIR, { recursive: true });
-      }
-      cb(null, TMP_DIR);
-    } catch (err) {
-      cb(err);
+    if (!fs.existsSync(TMP_DIR)) {
+      fs.mkdirSync(TMP_DIR, { recursive: true });
     }
+    cb(null, TMP_DIR);
   },
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname).toLowerCase();
