@@ -1,17 +1,5 @@
-// src/utils/uploadUser.js
+// backend/src/utils/uploadUser.js
 import multer from "multer";
-import crypto from "crypto";
-
-// =========================
-// SERVERLESS SAFE
-// =========================
-// Vercel TIDAK BOLEH:
-// - fs
-// - mkdir
-// - diskStorage
-//
-// Semua upload HARUS memory
-// =========================
 
 const storage = multer.memoryStorage();
 
@@ -22,21 +10,18 @@ function fileFilter(req, file, cb) {
   cb(null, true);
 }
 
-// upload foto user
 export const uploadUser = multer({
   storage,
   fileFilter,
   limits: { fileSize: 10 * 1024 * 1024 },
 });
 
-// upload ktp
 export const uploadKtp = multer({
   storage,
   fileFilter,
   limits: { fileSize: 10 * 1024 * 1024 },
 });
 
-// upload mitra (foto + ktp)
 export const uploadMitra = multer({
   storage,
   fileFilter,
