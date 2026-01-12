@@ -1,6 +1,8 @@
 import express from "express";
-import { uploadLapangan } from "../middleware/uploadLapangan.js";
-import { handleMulter } from "../utils/handleMulter.js";
+import {
+  uploadLapangan,
+  uploadToCloudinary,
+} from "../middleware/uploadLapangan.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 import {
   getLapanganList,
@@ -33,7 +35,33 @@ router.post(
     { name: "gambarUtama", maxCount: 1 },
     { name: "gambarList", maxCount: 10 },
   ]),
-  tambahLapangan
+  async (req, res) => {
+    try {
+      // Upload gambar utama
+      let gambarUtamaUrl = null;
+      if (req.files["gambarUtama"]?.length) {
+        gambarUtamaUrl = await uploadToCloudinary(
+          req.files["gambarUtama"][0].buffer,
+          "lapangan"
+        );
+      }
+
+      // Upload gambar list
+      let gambarListUrls = [];
+      if (req.files["gambarList"]?.length) {
+        for (const file of req.files["gambarList"]) {
+          const url = await uploadToCloudinary(file.buffer, "lapangan");
+          gambarListUrls.push(url);
+        }
+      }
+
+      // Panggil controller dengan URL Cloudinary
+      await tambahLapangan(req, res, { gambarUtamaUrl, gambarListUrls });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Upload gagal", error: err.message });
+    }
+  }
 );
 
 // Update lapangan
@@ -44,7 +72,30 @@ router.put(
     { name: "gambarUtama", maxCount: 1 },
     { name: "gambarList", maxCount: 10 },
   ]),
-  updateLapangan
+  async (req, res) => {
+    try {
+      let gambarUtamaUrl = null;
+      if (req.files["gambarUtama"]?.length) {
+        gambarUtamaUrl = await uploadToCloudinary(
+          req.files["gambarUtama"][0].buffer,
+          "lapangan"
+        );
+      }
+
+      let gambarListUrls = [];
+      if (req.files["gambarList"]?.length) {
+        for (const file of req.files["gambarList"]) {
+          const url = await uploadToCloudinary(file.buffer, "lapangan");
+          gambarListUrls.push(url);
+        }
+      }
+
+      await updateLapangan(req, res, { gambarUtamaUrl, gambarListUrls });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Update gagal", error: err.message });
+    }
+  }
 );
 
 // Hapus lapangan
@@ -71,8 +122,23 @@ router.get("/mitra/lapangan/:slug", authMiddleware, getDetailLapangan);
 router.post(
   "/mitra/lapangan/:id/upload",
   authMiddleware,
-  handleMulter(uploadLapangan.array("gambarList", 10)),
-  uploadGambar
+  uploadLapangan.array("gambarList", 10),
+  async (req, res) => {
+    try {
+      let gambarListUrls = [];
+      if (req.files?.length) {
+        for (const file of req.files) {
+          const url = await uploadToCloudinary(file.buffer, "lapangan");
+          gambarListUrls.push(url);
+        }
+      }
+
+      await uploadGambar(req, res, { gambarListUrls });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Upload gagal", error: err.message });
+    }
+  }
 );
 
 // Buat slot manual

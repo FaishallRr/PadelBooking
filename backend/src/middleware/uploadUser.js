@@ -1,31 +1,41 @@
+// src/middleware/uploadUser.js
 import multer from "multer";
-import path from "path";
-import fs from "fs";
+import cloudinary from "../config/cloudinary.js";
+import { Readable } from "stream";
+import crypto from "crypto";
 
-// Folder user
-const USER_IMG = path.join(process.cwd(), "public", "img", "user");
-if (!fs.existsSync(USER_IMG)) fs.mkdirSync(USER_IMG, { recursive: true });
-
-const storageUser = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, USER_IMG);
-  },
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase();
-    const unique = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, `user_${unique}${ext}`);
-  },
-});
-
-function fileFilter(req, file, cb) {
-  if (!file.mimetype.startsWith("image/")) {
-    return cb(new Error("Only image uploads are allowed"));
-  }
-  cb(null, true);
-}
+// Multer memory storage
+const storage = multer.memoryStorage();
 
 export const uploadUser = multer({
-  storage: storageUser,
+  storage,
   limits: { fileSize: 10 * 1024 * 1024 },
-  fileFilter,
+  fileFilter: (req, file, cb) => {
+    if (!file.mimetype.startsWith("image/")) {
+      return cb(new Error("Only image uploads are allowed"));
+    }
+    cb(null, true);
+  },
 });
+
+// Helper upload buffer ke Cloudinary
+export const uploadToCloudinary = (fileBuffer, folder = "user") => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder },
+      (error, result) => {
+        if (error) reject(error);
+        else resolve(result.secure_url);
+      }
+    );
+
+    const readable = new Readable();
+    readable.push(fileBuffer);
+    readable.push(null);
+    readable.pipe(stream);
+  });
+};
+
+// Upload KTP mitra
+export const uploadKtp = multer({ storage }); // sama memoryStorage
+export const uploadMitra = multer({ storage }); // untuk register-mitra (foto + ktp)
