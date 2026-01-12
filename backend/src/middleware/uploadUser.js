@@ -2,51 +2,36 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 
-const isVercel = process.env.VERCEL === "1";
+const TMP_DIR = "/tmp/user";
 
-// ==========================
-// LOCAL PATH
-// ==========================
-const USER_IMG = path.join(process.cwd(), "public", "img", "user");
+const storageUser = multer.diskStorage({
+  destination: (req, file, cb) => {
+    try {
+      if (!fs.existsSync(TMP_DIR)) {
+        fs.mkdirSync(TMP_DIR, { recursive: true });
+      }
+      cb(null, TMP_DIR);
+    } catch (err) {
+      cb(err);
+    }
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname).toLowerCase();
+    const unique = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, `user_${unique}${ext}`);
+  },
+});
 
-// ==========================
-// CREATE FOLDER (LOCAL ONLY)
-// ==========================
-if (!isVercel) {
-  if (!fs.existsSync(USER_IMG)) {
-    fs.mkdirSync(USER_IMG, { recursive: true });
-  }
-}
-
-// ==========================
-// STORAGE
-// ==========================
-const storageUser = isVercel
-  ? multer.memoryStorage()
-  : multer.diskStorage({
-      destination: (req, file, cb) => cb(null, USER_IMG),
-      filename: (req, file, cb) => {
-        const ext = path.extname(file.originalname).toLowerCase();
-        const unique = Date.now() + "-" + Math.round(Math.random() * 1e9);
-        cb(null, `user_${unique}${ext}`);
-      },
-    });
-
-// ==========================
-// FILTER
-// ==========================
-function fileFilter(req, file, cb) {
+const fileFilter = (req, file, cb) => {
   if (!file.mimetype.startsWith("image/")) {
-    return cb(new Error("Only image uploads are allowed"), false);
+    cb(new Error("Only image files allowed"), false);
+  } else {
+    cb(null, true);
   }
-  cb(null, true);
-}
+};
 
-// ==========================
-// EXPORT
-// ==========================
 export const uploadUser = multer({
   storage: storageUser,
   limits: { fileSize: 10 * 1024 * 1024 },
   fileFilter,
-}).single("foto");
+});
