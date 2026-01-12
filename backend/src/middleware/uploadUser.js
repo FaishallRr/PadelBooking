@@ -2,18 +2,13 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 
-const TMP_DIR = "/tmp/user";
+// Folder user
+const USER_IMG = path.join(process.cwd(), "public", "img", "user");
+if (!fs.existsSync(USER_IMG)) fs.mkdirSync(USER_IMG, { recursive: true });
 
 const storageUser = multer.diskStorage({
   destination: (req, file, cb) => {
-    try {
-      if (!fs.existsSync(TMP_DIR)) {
-        fs.mkdirSync(TMP_DIR, { recursive: true });
-      }
-      cb(null, TMP_DIR);
-    } catch (err) {
-      cb(err);
-    }
+    cb(null, USER_IMG);
   },
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname).toLowerCase();
@@ -22,13 +17,12 @@ const storageUser = multer.diskStorage({
   },
 });
 
-const fileFilter = (req, file, cb) => {
+function fileFilter(req, file, cb) {
   if (!file.mimetype.startsWith("image/")) {
-    cb(new Error("Only image files allowed"), false);
-  } else {
-    cb(null, true);
+    return cb(new Error("Only image uploads are allowed"));
   }
-};
+  cb(null, true);
+}
 
 export const uploadUser = multer({
   storage: storageUser,
