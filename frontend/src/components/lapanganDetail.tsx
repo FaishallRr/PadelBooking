@@ -147,6 +147,21 @@ export default function LapanganDetailComponent({
 }: {
   lapangan: LapanganDetail;
 }) {
+  // Helper function to safely parse fasilitas
+  const parseFasilitas = (fasilitas: any): string[] => {
+    if (!fasilitas) return [];
+    if (Array.isArray(fasilitas)) return fasilitas;
+    if (typeof fasilitas === "string") {
+      try {
+        const parsed = JSON.parse(fasilitas);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    }
+    return [];
+  };
+
   // ---------- STATES ----------
   const [imgIndex, setImgIndex] = useState(0);
   const [isImgOpen, setIsImgOpen] = useState(false);
@@ -443,11 +458,10 @@ export default function LapanganDetailComponent({
   };
 
   const hasSewaRaket = useMemo(() => {
-    return (
-      lapangan.detail?.fasilitas
-        ?.map((f) => f.toLowerCase())
-        .includes("sewa raket") ?? false
-    );
+    const fasilitasArray = parseFasilitas(lapangan.detail?.fasilitas);
+    return fasilitasArray
+      .map((f) => String(f).toLowerCase())
+      .includes("sewa raket");
   }, [lapangan.detail?.fasilitas]);
 
   const handleBooking = async () => {
@@ -695,7 +709,7 @@ export default function LapanganDetailComponent({
                   </h2>
 
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-3">
-                    {(lapangan.detail?.fasilitas || [])
+                    {parseFasilitas(lapangan.detail?.fasilitas)
                       .slice(0, 6)
                       .map((f, i) => {
                         const key = f.toLowerCase();
@@ -1093,7 +1107,7 @@ export default function LapanganDetailComponent({
                 </h4>
 
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-3 text-[14px]">
-                  {(lapangan.detail?.fasilitas || []).map((f, i) => {
+                  {parseFasilitas(lapangan.detail?.fasilitas).map((f, i) => {
                     const key = f.toLowerCase();
                     const Icon = fasilitasIcons[key];
 
