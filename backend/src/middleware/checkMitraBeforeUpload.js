@@ -1,8 +1,6 @@
 // src/middlewares/checkMitraBeforeUpload.js
-import { PrismaClient } from "@prisma/client";
+import prisma from "../utils/prismaClient.js";
 import jwt from "jsonwebtoken";
-
-const prisma = new PrismaClient();
 
 export async function checkMitraBeforeUpload(req, res, next) {
   try {

@@ -11,11 +11,7 @@ import {
   registerMitra,
 } from "../controller/authController.js";
 
-import {
-  uploadUser,
-  uploadMitra,
-  uploadToCloudinary,
-} from "../middleware/uploadUser.js";
+import { uploadUser, uploadMitra } from "../utils/uploadUser.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 import { checkMitraBeforeUpload } from "../middleware/checkMitraBeforeUpload.js";
 

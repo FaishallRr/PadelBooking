@@ -34,7 +34,12 @@ const app = express();
 ===================== */
 app.use(
   cors({
-    origin: ["https://padeltime.web.id", "https://padeltime.vercel.app"],
+    origin: [
+      "https://padeltime.web.id",
+      "https://padeltime.vercel.app",
+      "http://localhost:3000",
+      "http://localhost:5000",
+    ],
     credentials: true,
   })
 );
@@ -132,4 +137,6 @@ app.use((err, req, res, next) => {
 /* =====================
    EXPORT (WAJIB UNTUK VERCEL)
 ===================== */
-export default app;
+app.listen(process.env.PORT, () => {
+  console.log(`Server is running on port ${process.env.PORT}`);
+});

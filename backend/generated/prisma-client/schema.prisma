@@ -1,0 +1,386 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+//////////////////////
+// USERS
+//////////////////////
+model users {
+  id         Int          @id @default(autoincrement())
+  nama       String
+  username   String       @unique
+  email      String       @unique
+  password   String
+  no_hp      String?
+  foto       String?
+  bio        String?
+  role       users_role   @default(user)
+  status     users_status @default(aktif)
+  created_at DateTime     @default(now())
+  updated_at DateTime     @updatedAt
+
+  mitra      Mitra?
+  orders     order_booking[]
+  transaksi  transaksi[]
+  notifikasi notifikasi[]
+  ulasan     ulasan[]
+  wallet     wallet_user?
+  refund     refund[]
+}
+
+//////////////////////
+// MITRA
+//////////////////////
+model Mitra {
+  id     Int   @id @default(autoincrement())
+  userId Int   @unique
+  user   users @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  nama_usaha   String
+  alamat_usaha String
+  no_ktp       String
+  foto_ktp     String
+
+  withdraw_type String? // "weekly" | "monthly"
+  withdraw_day  Int? // 1-7 (weekly) / 1-28 (monthly)
+
+  bank_mitra        String?
+  no_rekening_mitra String?
+
+  status     mitra_status @default(pending)
+  created_at DateTime     @default(now())
+
+  lapangan   Lapangan[]
+  pendapatan pendapatan_mitra[]
+  pencairan  pencairan_pendapatan[]
+}
+
+///////////////////
+// OTP
+///////////////////
+model otp_codes {
+  id         Int      @id @default(autoincrement())
+  user_email String
+  kode_otp   String
+  expired_at DateTime
+  digunakan  Boolean  @default(false)
+  created_at DateTime @default(now())
+}
+
+//////////////////////
+// LAPANGAN
+//////////////////////
+model Lapangan {
+  id         Int             @id @default(autoincrement())
+  mitra_id   Int
+  nama       String
+  slug       String          @unique
+  lokasi     String?
+  harga      Decimal
+  gambar     String?
+  rating     Float?
+  status     lapangan_status @default(tersedia)
+  created_at DateTime        @default(now())
+
+  mitra      Mitra            @relation(fields: [mitra_id], references: [id])
+  detail     LapanganDetail?
+  gambarList LapanganGambar[]
+  jadwal     JadwalLapangan[]
+  orders     order_booking[]
+  transaksi  transaksi[]
+  ulasan     ulasan[]
+}
+
+model LapanganDetail {
+  id          Int    @id @default(autoincrement())
+  lapangan_id Int    @unique
+  alamat      String
+  maps        String @db.Text // text, bisa panjang & ada spasi/enter
+  deskripsi   String @db.Text // ubah ke Text karena bisa ada enter/baris baru
+  type        String
+  fasilitas   Json
+
+  interval  Int @default(60)
+  breakTime Int @default(10)
+
+  lapangan Lapangan @relation(fields: [lapangan_id], references: [id], onDelete: Cascade)
+}
+
+model LapanganGambar {
+  id          Int      @id @default(autoincrement())
+  lapangan_id Int
+  file_name   String
+  created_at  DateTime @default(now())
+
+  lapangan Lapangan @relation(fields: [lapangan_id], references: [id], onDelete: Cascade)
+}
+
+//////////////////////
+// JADWAL
+//////////////////////
+
+model JadwalLapangan {
+  id           Int           @id @default(autoincrement())
+  lapangan_id  Int
+  tanggal      DateTime
+  slot         String
+  status       jadwal_status @default(tersedia)
+  locked_until DateTime?
+
+  lapangan  Lapangan        @relation(fields: [lapangan_id], references: [id], onDelete: Cascade)
+  orders    order_booking[]
+  transaksi transaksi[]
+
+  @@unique([lapangan_id, tanggal, slot])
+}
+
+//////////////////////
+// ORDER
+//////////////////////
+model order_booking {
+  id               Int      @id @default(autoincrement())
+  user_id          Int
+  lapangan_id      Int
+  jadwalLapanganId Int
+  tanggal          DateTime
+  jam_mulai        String
+  jam_selesai      String
+  total_harga      Decimal
+  status           String
+
+  sewa_raket  Boolean @default(false)
+  biaya_raket Int     @default(0)
+
+  created_at DateTime  @default(now())
+  expired_at DateTime?
+
+  user           users          @relation(fields: [user_id], references: [id])
+  lapangan       Lapangan       @relation(fields: [lapangan_id], references: [id])
+  jadwalLapangan JadwalLapangan @relation(fields: [jadwalLapanganId], references: [id])
+  transaksi      transaksi?
+  refund         refund?
+
+  // ⬅️ Tambahkan relasi balik ke wallet_history
+  wallet_histories wallet_history[]
+}
+
+//////////////////////
+// TRANSAKSI
+//////////////////////
+model transaksi {
+  id          Int  @id @default(autoincrement())
+  user_id     Int
+  lapangan_id Int
+  jadwal_id   Int
+  order_id    Int? @unique
+
+  total_harga       Decimal
+  status_pembayaran transaksi_status_pembayaran @default(pending)
+  created_at        DateTime                    @default(now())
+
+  user     users          @relation(fields: [user_id], references: [id])
+  lapangan Lapangan       @relation(fields: [lapangan_id], references: [id])
+  jadwal   JadwalLapangan @relation(fields: [jadwal_id], references: [id])
+  order    order_booking? @relation(fields: [order_id], references: [id])
+
+  refund     refund?
+  sewa_raket sewa_raket[]
+}
+
+//////////////////////
+// RAKET
+//////////////////////
+model raket_padel {
+  id    Int     @id @default(autoincrement())
+  nama  String
+  harga Decimal
+
+  sewa_raket sewa_raket[]
+}
+
+model sewa_raket {
+  id           Int     @id @default(autoincrement())
+  transaksi_id Int
+  raket_id     Int
+  jumlah       Int
+  total_harga  Decimal
+
+  transaksi transaksi   @relation(fields: [transaksi_id], references: [id], onDelete: Cascade)
+  raket     raket_padel @relation(fields: [raket_id], references: [id])
+}
+
+//////////////////////
+// WALLET USER
+//////////////////////
+model wallet_user {
+  id         Int      @id @default(autoincrement())
+  user_id    Int      @unique
+  saldo      Int      @default(0)
+  updated_at DateTime @updatedAt
+
+  user    users            @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  history wallet_history[]
+}
+
+model wallet_history {
+  id           Int         @id @default(autoincrement())
+  wallet_id    Int
+  jumlah       Int
+  saldo_akhir  Int
+  tipe         wallet_tipe
+  transaksi_id Int?
+  order_id     Int?
+
+  created_at DateTime @default(now())
+
+  wallet wallet_user    @relation(fields: [wallet_id], references: [id], onDelete: Cascade)
+  order  order_booking? @relation(fields: [order_id], references: [id], onDelete: Cascade)
+
+  @@index([wallet_id])
+  @@index([transaksi_id])
+  @@index([order_id])
+}
+
+//////////////////////
+// REFUND
+//////////////////////
+model refund {
+  id           Int @id @default(autoincrement())
+  user_id      Int
+  transaksi_id Int @unique
+  order_id     Int @unique
+
+  jumlah Decimal
+  alasan String?
+  status refund_status @default(pending)
+
+  created_at   DateTime  @default(now())
+  processed_at DateTime?
+
+  user      users         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  transaksi transaksi     @relation(fields: [transaksi_id], references: [id], onDelete: Cascade)
+  order     order_booking @relation(fields: [order_id], references: [id], onDelete: Cascade)
+}
+
+//////////////////////
+// NOTIFIKASI
+//////////////////////
+model notifikasi {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  pesan      String
+  dibaca     Boolean  @default(false)
+  created_at DateTime @default(now())
+
+  user users @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+//////////////////////
+// ULASAN
+//////////////////////
+model ulasan {
+  id          Int      @id @default(autoincrement())
+  user_id     Int
+  lapangan_id Int
+  rating      Int
+  komentar    String?
+  created_at  DateTime @default(now())
+
+  user     users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  lapangan Lapangan @relation(fields: [lapangan_id], references: [id], onDelete: Cascade)
+}
+
+//////////////////////
+// KEUANGAN MITRA
+//////////////////////
+model pendapatan_mitra {
+  id           Int      @id @default(autoincrement())
+  mitra_id     Int
+  transaksi_id Int
+  jumlah       Decimal
+  created_at   DateTime @default(now())
+
+  mitra Mitra @relation(fields: [mitra_id], references: [id], onDelete: Cascade)
+}
+
+model pencairan_pendapatan {
+  id         Int              @id @default(autoincrement())
+  mitra_id   Int
+  jumlah     Decimal
+  status     pencairan_status @default(pending)
+  created_at DateTime         @default(now())
+
+  mitra Mitra @relation(fields: [mitra_id], references: [id], onDelete: Cascade)
+}
+
+//////////////////////
+// ENUM
+//////////////////////
+enum users_role {
+  admin
+  user
+  mitra
+}
+
+enum users_status {
+  aktif
+  nonaktif
+}
+
+enum mitra_status {
+  pending
+  aktif
+  ditolak
+}
+
+enum lapangan_status {
+  tersedia
+  dalam_perbaikan
+}
+
+enum jadwal_status {
+  tersedia
+  dikunci
+  booked
+}
+
+enum order_status {
+  pending
+  expired
+  dibayar
+  dibatalkan
+  refund
+}
+
+enum transaksi_status_pembayaran {
+  pending
+  berhasil
+  gagal
+  refund
+}
+
+enum refund_status {
+  pending
+  approved
+  rejected
+  selesai
+}
+
+enum pencairan_status {
+  pending
+  diproses
+  berhasil
+  ditolak
+}
+
+enum wallet_tipe {
+  booking
+  refund
+  topup
+}

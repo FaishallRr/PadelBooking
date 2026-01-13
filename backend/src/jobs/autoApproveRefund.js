@@ -1,7 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "../utils/prismaClient.js";
 import dayjs from "dayjs";
-
-const prisma = new PrismaClient();
 
 export const autoApproveRefundH3 = async () => {
   console.log("⏰ Auto approve refund H-3 running...");

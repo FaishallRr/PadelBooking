@@ -1,12 +1,10 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "../utils/prismaClient.js";
 import { generateOtp } from "../utils/otpGenerator.js";
 import { sendOtpEmail } from "../utils/sendOtpEmail.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import fs from "fs";
 import path from "path";
-
-const prisma = new PrismaClient();
 
 /* ========================= SEND OTP ========================= */
 export const sendOtp = async (req, res) => {
