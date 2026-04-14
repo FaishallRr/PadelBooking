@@ -1,6 +1,7 @@
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import { randomBytes } from "crypto";
 
 // Folder lapangan
 const LAPANGAN_IMG = path.join(process.cwd(), "public", "img", "lapangan");
@@ -11,8 +12,11 @@ const storageLapangan = multer.diskStorage({
   destination: (req, file, cb) => cb(null, LAPANGAN_IMG),
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname).toLowerCase();
-    const id = req.params.id ?? "temp";
-    cb(null, `lapangan_${id}_${Date.now()}${ext}`);
+    // Gunakan random ID atau lapangan ID jika tersedia, fallback ke UUID
+    const id =
+      req.params.id || req.body.lapanganId || randomBytes(6).toString("hex");
+    const timestamp = Date.now();
+    cb(null, `lapangan_${id}_${timestamp}${ext}`);
   },
 });
 

@@ -4,10 +4,45 @@ import path from "path";
 import slugify from "slugify";
 import { addDays, format } from "date-fns";
 
-const imgUrl = (filename) => (filename ? `/img/lapangan/${filename}` : null);
-
 const PUBLIC_IMG = path.join(process.cwd(), "public", "img");
 if (!fs.existsSync(PUBLIC_IMG)) fs.mkdirSync(PUBLIC_IMG, { recursive: true });
+
+/**
+ * Rename uploaded files from temporary ID to actual lapangan ID
+ * This fixes the image display issue where files are uploaded before lapangan creation
+ */
+async function renameUploadedFiles(gambarListFiles, lapanganId) {
+  if (!gambarListFiles || gambarListFiles.length === 0) return [];
+
+  const renamedFiles = [];
+  const lapanganDir = path.join(PUBLIC_IMG, "lapangan");
+
+  for (const file of gambarListFiles) {
+    if (!file?.filename) continue;
+
+    const oldPath = path.join(lapanganDir, file.filename);
+    const ext = path.extname(file.filename);
+    const newFileName = `lapangan_${lapanganId}_${Date.now()}${ext}`;
+    const newPath = path.join(lapanganDir, newFileName);
+
+    try {
+      // Rename file on disk if exists
+      if (fs.existsSync(oldPath)) {
+        fs.renameSync(oldPath, newPath);
+      }
+      file.filename = newFileName; // Update filename for DB storage
+      renamedFiles.push(newFileName);
+    } catch (err) {
+      console.warn(`Failed to rename file ${file.filename}:`, err.message);
+      // Continue with original filename if rename fails
+      renamedFiles.push(file.filename);
+    }
+  }
+
+  return renamedFiles;
+}
+
+const imgUrl = (filename) => (filename ? `/img/lapangan/${filename}` : null);
 
 /**
  * Generate unique slug (slugify + append -1, -2, ... jika sudah ada)
@@ -37,7 +72,7 @@ async function generateJadwal(
   lapangan_id,
   tanggal,
   interval = 60,
-  breakTime = 0
+  breakTime = 0,
 ) {
   const sessionTimes = [
     { start: "08:00", end: "11:00" },
@@ -178,7 +213,7 @@ export async function getLapanganBySlug(req, res) {
       const slotStart = j.slot.split(" - ")[0]; // ambil jam mulai
 
       const session = sessionTimes.find(
-        (s) => slotStart >= s.start && slotStart < s.end
+        (s) => slotStart >= s.start && slotStart < s.end,
       );
       if (session)
         groupedJadwal[tgl][session.name].push({
@@ -343,13 +378,13 @@ export async function tambahLapangan(req, res) {
       }
     }
 
-    const gambar = req.files?.gambar?.[0]?.filename || null;
+    const gambar = req.files?.gambarUtama?.[0]?.filename || null;
     const gambarListFiles = Array.isArray(req.files?.gambarList)
       ? req.files.gambarList
       : [];
 
     const slug = await generateUniqueSlug(
-      slugify(nama, { lower: true, strict: true })
+      slugify(nama, { lower: true, strict: true }),
     );
 
     // ✅ CREATE LAPANGAN (FIX)
@@ -375,14 +410,38 @@ export async function tambahLapangan(req, res) {
       },
     });
 
-    // Simpan gambar list
-    if (gambarListFiles.length > 0) {
-      const data = gambarListFiles
-        .filter((f) => f?.filename)
-        .map((f) => ({
-          lapangan_id: lapangan.id,
-          file_name: f.filename,
-        }));
+    // ✅ RENAME FILES & SIMPAN GAMBAR LIST
+    const renamedFiles = await renameUploadedFiles(gambarListFiles, lapangan.id);
+
+    // Rename gambar utama jika ada
+    let finalGambar = gambar;
+    if (gambar) {
+      const ext = path.extname(gambar);
+      const newGambarName = `lapangan_${lapangan.id}_utama${ext}`;
+      const oldPath = path.join(path.join(process.cwd(), "public", "img", "lapangan"), gambar);
+      const newPath = path.join(path.join(process.cwd(), "public", "img", "lapangan"), newGambarName);
+
+      try {
+        if (fs.existsSync(oldPath)) {
+          fs.renameSync(oldPath, newPath);
+          finalGambar = newGambarName;
+
+          // Update database dengan nama gambar yang sudah di-rename
+          await prisma.lapangan.update({
+            where: { id: lapangan.id },
+            data: { gambar: finalGambar }
+          });
+        }
+      } catch (err) {
+        console.warn(`Failed to rename main image: ${err.message}`);
+      }
+    }
+
+    if (renamedFiles.length > 0) {
+      const data = renamedFiles.map((fileName) => ({
+        lapangan_id: lapangan.id,
+        file_name: fileName,
+      }));
       await prisma.lapanganGambar.createMany({
         data,
         skipDuplicates: true,
@@ -395,7 +454,7 @@ export async function tambahLapangan(req, res) {
       lapangan.id,
       startDate,
       interval,
-      breakTime
+      breakTime,
     );
 
     const result = await prisma.lapangan.findUnique({
@@ -550,7 +609,7 @@ export async function updateLapangan(req, res) {
           "public",
           "img",
           "lapangan",
-          filename
+          filename,
         );
         if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
       }
@@ -679,7 +738,7 @@ export async function createJadwal(req, res) {
       lapangan_id,
       date,
       detail.interval ?? 60,
-      detail.breakTime ?? 0
+      detail.breakTime ?? 0,
     );
 
     if (jadwalCreated.length === 0)
@@ -741,7 +800,7 @@ export async function ensure7DaysSlots(lapanganId) {
         lapanganId,
         date,
         interval,
-        breakTime
+        breakTime,
       );
       jadwalCreated.push(...created);
     }
@@ -855,7 +914,7 @@ export async function updateStatusLapangan(req, res) {
     if (!status || !validStatuses.includes(status)) {
       return res.status(400).json({
         message: `Status tidak valid. Pilih salah satu: ${validStatuses.join(
-          ", "
+          ", ",
         )}`,
       });
     }
@@ -1089,4 +1148,3 @@ export const deleteLapanganAdmin = async (req, res) => {
     });
   }
 };
-
