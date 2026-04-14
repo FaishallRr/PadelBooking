@@ -848,7 +848,7 @@ export async function updateStatusLapangan(req, res) {
   try {
     const { slug } = req.params;
     const { status } = req.body; // Harus "tersedia" | "dalam_perbaikan"
-    const mitraId = req.user.id;
+    const userId = req.user.id;
 
     // Validasi enum
     const validStatuses = ["tersedia", "dalam_perbaikan"];
@@ -860,9 +860,18 @@ export async function updateStatusLapangan(req, res) {
       });
     }
 
+    // Ambil mitra dari user ID
+    const mitra = await prisma.mitra.findUnique({
+      where: { userId },
+    });
+
+    if (!mitra) {
+      return res.status(403).json({ message: "Bukan akun mitra" });
+    }
+
     // Ambil lapangan milik mitra
     const lapangan = await prisma.lapangan.findFirst({
-      where: { slug, mitra_id: mitraId },
+      where: { slug, mitra_id: mitra.id },
     });
 
     if (!lapangan)
@@ -922,21 +931,44 @@ export const toggleStatusLapangan = async (req, res) => {
 
 export const getAdminDashboardSummary = async (req, res) => {
   try {
-    const [totalUsers, totalLapangan, totalBooking, revenueAgg] =
-      await Promise.all([
-        prisma.users.count(), // ✅ FIX
-        prisma.lapangan.count(),
-        prisma.order_booking.count(),
-        prisma.transaksi.aggregate({
-          _sum: { total_harga: true },
-        }),
-      ]);
+    const [
+      totalUsers,
+      totalLapangan,
+      totalBooking,
+      revenueAgg,
+      adminRevenueAgg,
+      totalMitra,
+      activeMitra,
+      pendingPencairan,
+      pendingRefund,
+    ] = await Promise.all([
+      prisma.users.count(),
+      prisma.lapangan.count(),
+      prisma.order_booking.count({ where: { status: "dibayar" } }),
+      prisma.transaksi.aggregate({
+        where: { status_pembayaran: "berhasil" },
+        _sum: { total_harga: true },
+      }),
+      prisma.transaksi.aggregate({
+        where: { status_pembayaran: "berhasil" },
+        _sum: { biaya_admin: true },
+      }),
+      prisma.mitra.count(),
+      prisma.mitra.count({ where: { status: "aktif" } }),
+      prisma.pencairan_pendapatan.count({ where: { status: "pending" } }),
+      prisma.refund.count({ where: { status: "pending" } }),
+    ]);
 
     res.json({
       totalUsers,
       totalLapangan,
       totalBooking,
-      totalRevenue: revenueAgg._sum.total_harga || 0,
+      totalRevenue: Number(revenueAgg._sum.total_harga || 0),
+      adminRevenue: Number(adminRevenueAgg._sum.biaya_admin || 0),
+      totalMitra,
+      activeMitra,
+      pendingPencairan,
+      pendingRefund,
     });
   } catch (err) {
     console.error("getAdminDashboardSummary error:", err);
@@ -1058,104 +1090,3 @@ export const deleteLapanganAdmin = async (req, res) => {
   }
 };
 
-export const payWithWallet = async (req, res) => {
-  const userId = req.user.id;
-  const { orderId } = req.body;
-
-  const order = await prisma.order_booking.findUnique({
-    where: { id: orderId },
-  });
-
-  if (!order) return res.status(404).json({ message: "Order tidak ditemukan" });
-
-  const wallet = await prisma.wallet_user.findUnique({
-    where: { user_id: userId },
-  });
-
-  if (wallet.saldo < order.total_harga)
-    return res.status(400).json({ message: "Saldo tidak cukup" });
-
-  await prisma.$transaction(async (tx) => {
-    // 1️⃣ potong saldo
-    await tx.wallet_user.update({
-      where: { id: wallet.id },
-      data: {
-        saldo: { decrement: order.total_harga },
-      },
-    });
-
-    // 2️⃣ histori wallet
-    await tx.wallet_history.create({
-      data: {
-        wallet_id: wallet.id,
-        jumlah: order.total_harga,
-        tipe: "booking",
-        catatan: `Bayar booking #${order.id}`,
-      },
-    });
-
-    // 3️⃣ update order
-    await tx.order_booking.update({
-      where: { id: order.id },
-      data: { status: "dibayar" },
-    });
-
-    // 4️⃣ transaksi
-    await tx.transaksi.create({
-      data: {
-        user_id: userId,
-        lapangan_id: order.lapangan_id,
-        jadwal_id: order.jadwal_id,
-        order_id: order.id,
-        total_harga: order.total_harga,
-        status_pembayaran: "berhasil",
-        payment_method: "wallet",
-      },
-    });
-  });
-
-  res.json({ message: "Pembayaran berhasil via wallet" });
-};
-
-export const adminTopupWallet = async (req, res) => {
-  const { userId, jumlah } = req.body;
-
-  const wallet = await prisma.wallet_user.findUnique({
-    where: { user_id: userId },
-  });
-
-  await prisma.$transaction(async (tx) => {
-    await tx.wallet_user.update({
-      where: { id: wallet.id },
-      data: { saldo: { increment: jumlah } },
-    });
-
-    await tx.wallet_history.create({
-      data: {
-        wallet_id: wallet.id,
-        jumlah,
-        tipe: "topup",
-        catatan: "Topup oleh admin",
-      },
-    });
-  });
-
-  res.json({ message: "Topup berhasil" });
-};
-
-// GET /api/admin/refund
-export const getAllRefunds = async (req, res) => {
-  try {
-    const refunds = await prisma.refund.findMany({
-      include: {
-        user: { select: { nama: true } },
-        order: { select: { tanggal: true, lapanganNama: true } },
-      },
-      orderBy: { created_at: "desc" },
-    });
-    res.json({ history: refunds });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Gagal fetch refund" });
-  }
-};

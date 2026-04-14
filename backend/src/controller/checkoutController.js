@@ -1,5 +1,9 @@
 // src/controller/checkoutController.js
+// LEGACY: Checkout via wallet (kept for backward compatibility)
+// New payment flow uses /api/payment/create → Midtrans
 import prisma from "../utils/prismaClient.js";
+import { calculatePriceBreakdown } from "../utils/constants.js";
+import { createNotification } from "../utils/notificationHelper.js";
 
 export const checkoutWallet = async (req, res) => {
   try {
@@ -11,10 +15,11 @@ export const checkoutWallet = async (req, res) => {
     if (!order_id)
       return res.status(400).json({ message: "order_id tidak dikirim" });
 
-    const BIAYA_RAKET = sewa_raket ? 30000 : 0;
-
     const order = await prisma.order_booking.findUnique({
       where: { id: order_id },
+      include: {
+        lapangan: { include: { mitra: true } },
+      },
     });
     if (!order)
       return res.status(404).json({ message: "Order tidak ditemukan" });
@@ -25,7 +30,9 @@ export const checkoutWallet = async (req, res) => {
     if (!wallet)
       return res.status(404).json({ message: "Wallet tidak ditemukan" });
 
-    const totalBayar = Number(order.total_harga) + Number(BIAYA_RAKET);
+    // Hitung harga dengan admin fee
+    const hargaSewa = Number(order.total_harga);
+    const { totalBayar, biayaAdmin, biayaMitra, biayaRaket } = calculatePriceBreakdown(hargaSewa, sewa_raket);
 
     if (wallet.saldo < totalBayar) {
       return res.status(400).json({ message: "Saldo tidak cukup" });
@@ -47,13 +54,22 @@ export const checkoutWallet = async (req, res) => {
             jadwal_id: order.jadwalLapanganId,
             order_id: order.id,
             total_harga: totalBayar,
+            biaya_admin: biayaAdmin,
+            biaya_mitra: biayaMitra,
             status_pembayaran: "berhasil",
+            payment_type: "wallet",
           },
         });
       } else {
         await tx.transaksi.update({
           where: { id: transaksi.id },
-          data: { status_pembayaran: "berhasil" },
+          data: {
+            status_pembayaran: "berhasil",
+            total_harga: totalBayar,
+            biaya_admin: biayaAdmin,
+            biaya_mitra: biayaMitra,
+            payment_type: "wallet",
+          },
         });
       }
 
@@ -63,7 +79,7 @@ export const checkoutWallet = async (req, res) => {
         data: { saldo: saldoAkhir },
       });
 
-      // 3️⃣ Wallet history (WAJIB saldo_akhir)
+      // 3️⃣ Wallet history
       await tx.wallet_history.create({
         data: {
           wallet_id: wallet.id,
@@ -81,16 +97,40 @@ export const checkoutWallet = async (req, res) => {
         data: {
           status: "dibayar",
           sewa_raket,
-          biaya_raket: BIAYA_RAKET,
+          biaya_raket: biayaRaket,
           total_harga: totalBayar,
         },
       });
+
+      // 5️⃣ Update jadwal → booked
+      await tx.jadwalLapangan.update({
+        where: { id: order.jadwalLapanganId },
+        data: { status: "booked" },
+      });
+
+      // 6️⃣ Catat pendapatan mitra
+      if (order.lapangan?.mitra) {
+        await tx.pendapatan_mitra.create({
+          data: {
+            mitra_id: order.lapangan.mitra.id,
+            transaksi_id: transaksi.id,
+            jumlah: biayaMitra,
+          },
+        });
+      }
     });
+
+    // Notifikasi
+    await createNotification(
+      userId,
+      `Pembayaran via wallet berhasil! Booking ${order.lapangan.nama} telah dikonfirmasi. Total: Rp ${totalBayar.toLocaleString("id-ID")}`
+    );
 
     return res.json({
       message: "Pembayaran berhasil",
       order_id,
       total_bayar: totalBayar,
+      biaya_admin: biayaAdmin,
     });
   } catch (err) {
     console.error("CHECKOUT WALLET ERROR:", err);

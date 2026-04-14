@@ -1,4 +1,6 @@
 import prisma from "../utils/prismaClient.js";
+import { REFUND_CUT_PERCENT } from "../utils/constants.js";
+import { createNotification } from "../utils/notificationHelper.js";
 
 /**
  * Ajukan refund oleh user
@@ -50,13 +52,17 @@ export const requestRefund = async (req, res) => {
       return res.status(400).json({ message: "Refund sudah diajukan" });
     }
 
+    // Hitung jumlah refund (potong 10%)
+    const totalHarga = Number(order.total_harga);
+    const jumlahRefund = Math.round(totalHarga * (1 - REFUND_CUT_PERCENT));
+
     // Buat refund
     const refund = await prisma.refund.create({
       data: {
         user_id: userId,
         order_id: order.id,
         transaksi_id: order.transaksi.id,
-        jumlah: order.total_harga,
+        jumlah: jumlahRefund,
         alasan,
       },
       include: {
@@ -71,9 +77,17 @@ export const requestRefund = async (req, res) => {
       },
     });
 
+    // Notifikasi ke user
+    await createNotification(
+      userId,
+      `Pengajuan refund untuk ${order.lapangan.nama} (${order.tanggal.toISOString().slice(0, 10)}) berhasil dikirim. Jumlah refund: Rp ${jumlahRefund.toLocaleString("id-ID")} (potongan 10%).`
+    );
+
     return res.status(201).json({
       message: "Permintaan refund berhasil dikirim",
       data: refund,
+      potongan: `${REFUND_CUT_PERCENT * 100}%`,
+      jumlah_refund: jumlahRefund,
     });
   } catch (err) {
     console.error("REFUND ERROR:", err);
@@ -106,18 +120,16 @@ export const getMyRefunds = async (req, res) => {
       orderBy: { created_at: "desc" },
     });
 
-    // map ke format FE WalletHistory
-    // controller/refundController.js
     const history = refunds.map((r) => ({
       id: r.id,
       lapanganNama: r.order?.lapangan?.nama || "Lapangan Tidak Diketahui",
       tanggal: r.order?.tanggal || "",
       jamMulai: r.order?.jam_mulai || "-",
       jamSelesai: r.order?.jam_selesai || "-",
-      jumlah: -Number(r.jumlah),
-      status: r.status.toUpperCase(), // BERHASIL / PENDING / GAGAL untuk UI nominal
+      jumlah: Number(r.jumlah),
+      status: r.status.toUpperCase(),
       orderId: r.order_id,
-      refundStatus: r.status, // <--- tambah field ini
+      refundStatus: r.status,
     }));
 
     return res.status(200).json({ history });
@@ -129,7 +141,6 @@ export const getMyRefunds = async (req, res) => {
   }
 };
 
-// controller/refundController.js
 export const cancelRefund = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -171,10 +182,17 @@ export const approveRefund = async (req, res) => {
       return res.status(400).json({ message: "refund_id wajib diisi" });
     }
 
+    let refundData;
+
     await prisma.$transaction(async (tx) => {
       // 1️⃣ Ambil refund
       const refund = await tx.refund.findUnique({
         where: { id: refund_id },
+        include: {
+          order: {
+            include: { lapangan: { select: { nama: true } } },
+          },
+        },
       });
 
       if (!refund) {
@@ -185,6 +203,8 @@ export const approveRefund = async (req, res) => {
         throw new Error("Refund sudah diproses");
       }
 
+      refundData = refund;
+
       // 2️⃣ Ambil wallet user
       const wallet = await tx.wallet_user.findUnique({
         where: { user_id: refund.user_id },
@@ -194,7 +214,7 @@ export const approveRefund = async (req, res) => {
         throw new Error("Wallet user tidak ditemukan");
       }
 
-      // 3️⃣ Update saldo wallet
+      // 3️⃣ Update saldo wallet (jumlah sudah dipotong 10% saat request)
       const updatedWallet = await tx.wallet_user.update({
         where: { id: wallet.id },
         data: {
@@ -204,11 +224,11 @@ export const approveRefund = async (req, res) => {
         },
       });
 
-      // 4️⃣ Catat wallet history (INI YANG KEMARIN SALAH)
+      // 4️⃣ Catat wallet history
       await tx.wallet_history.create({
         data: {
-          wallet_id: wallet.id, // ✅ WAJIB
-          order_id: refund.order_id, // opsional
+          wallet_id: wallet.id,
+          order_id: refund.order_id,
           transaksi_id: refund.transaksi_id,
           jumlah: Number(refund.jumlah),
           saldo_akhir: updatedWallet.saldo,
@@ -225,21 +245,33 @@ export const approveRefund = async (req, res) => {
         },
       });
 
-      // 6️⃣ (OPSIONAL TAPI BAGUS) update order & transaksi
+      // 6️⃣ Update order & transaksi
       await tx.order_booking.update({
         where: { id: refund.order_id },
-        data: {
-          status: "refund",
-        },
+        data: { status: "refund" },
       });
 
       await tx.transaksi.update({
         where: { id: refund.transaksi_id },
-        data: {
-          status_pembayaran: "refund",
-        },
+        data: { status_pembayaran: "refund" },
       });
+
+      // 7️⃣ Kembalikan jadwal ke tersedia
+      if (refund.order) {
+        await tx.jadwalLapangan.update({
+          where: { id: refund.order.jadwalLapanganId },
+          data: { status: "tersedia" },
+        });
+      }
     });
+
+    // Notifikasi ke user
+    if (refundData) {
+      await createNotification(
+        refundData.user_id,
+        `Refund Rp ${Number(refundData.jumlah).toLocaleString("id-ID")} untuk ${refundData.order?.lapangan?.nama || "lapangan"} telah disetujui dan dikembalikan ke wallet.`
+      );
+    }
 
     return res.json({
       message: "Refund berhasil disetujui",
@@ -253,28 +285,38 @@ export const approveRefund = async (req, res) => {
 };
 
 export const getAllRefundsAdmin = async (req, res) => {
-  const refunds = await prisma.refund.findMany({
-    include: {
-      user: { select: { nama: true } },
-      order: {
-        select: {
-          tanggal: true,
-          lapangan: { select: { nama: true } },
+  try {
+    const refunds = await prisma.refund.findMany({
+      include: {
+        user: { select: { nama: true } },
+        order: {
+          select: {
+            tanggal: true,
+            total_harga: true,
+            lapangan: { select: { nama: true } },
+          },
         },
       },
-    },
-    orderBy: { created_at: "desc" },
-  });
+      orderBy: { created_at: "desc" },
+    });
 
-  const data = refunds.map((r) => ({
-    id: r.id,
-    user: r.user,
-    lapanganNama: r.order.lapangan.nama,
-    tanggal: r.order.tanggal,
-    jumlah: Number(r.jumlah) * 0.8,
-    alasan: r.alasan,
-    refundStatus: r.status,
-  }));
+    const data = refunds.map((r) => ({
+      id: r.id,
+      user: r.user,
+      lapanganNama: r.order?.lapangan?.nama || "-",
+      tanggal: r.order?.tanggal,
+      jumlah_refund: Number(r.jumlah),
+      jumlah_asli: Number(r.order?.total_harga || 0),
+      potongan: Number(r.order?.total_harga || 0) - Number(r.jumlah),
+      alasan: r.alasan,
+      refundStatus: r.status,
+      created_at: r.created_at,
+      processed_at: r.processed_at,
+    }));
 
-  res.json({ history: data });
+    res.json({ history: data });
+  } catch (err) {
+    console.error("GET ALL REFUNDS ERROR:", err);
+    res.status(500).json({ message: "Gagal mengambil data refund" });
+  }
 };

@@ -6,35 +6,44 @@ import {
   getAllLapanganAdmin,
   toggleStatusLapanganAdmin,
   deleteLapanganAdmin,
-  getAllRefunds,
 } from "../controller/lapanganController.js";
+import {
+  getAllMitra,
+  updateMitraStatus,
+  getMitraPendapatan,
+  getAdminRevenueChart,
+} from "../controller/adminMitraController.js";
+import {
+  getAllPencairan,
+  approvePencairan,
+  rejectPencairan,
+} from "../controller/pencairanController.js";
+import {
+  getAllRefundsAdmin,
+} from "../controller/refundController.js";
 
 const router = express.Router();
 
-router.get(
-  "/dashboard/summary",
-  authMiddleware,
-  adminOnly,
-  getAdminDashboardSummary
-);
+// Dashboard
+router.get("/dashboard/summary", authMiddleware, adminOnly, getAdminDashboardSummary);
+router.get("/revenue-chart", authMiddleware, adminOnly, getAdminRevenueChart);
 
+// Lapangan
 router.get("/lapangan", authMiddleware, adminOnly, getAllLapanganAdmin);
+router.patch("/lapangan/:slug/toggle-status", authMiddleware, adminOnly, toggleStatusLapanganAdmin);
+router.delete("/lapangan/:slug", authMiddleware, adminOnly, deleteLapanganAdmin);
 
-// 🔥 TAMBAHAN INI
-router.patch(
-  "/lapangan/:slug/toggle-status",
-  authMiddleware,
-  adminOnly,
-  toggleStatusLapanganAdmin
-);
+// Refund
+router.get("/refunds", authMiddleware, adminOnly, getAllRefundsAdmin);
 
-router.delete(
-  "/lapangan/:slug",
-  authMiddleware,
-  adminOnly,
-  deleteLapanganAdmin
-);
+// Mitra Management
+router.get("/mitra", authMiddleware, adminOnly, getAllMitra);
+router.patch("/mitra/:id/status", authMiddleware, adminOnly, updateMitraStatus);
+router.get("/mitra/:id/pendapatan", authMiddleware, adminOnly, getMitraPendapatan);
 
-router.get("/refunds", authMiddleware, adminOnly, getAllRefunds);
+// Pencairan
+router.get("/pencairan", authMiddleware, adminOnly, getAllPencairan);
+router.post("/pencairan/approve", authMiddleware, adminOnly, approvePencairan);
+router.post("/pencairan/reject", authMiddleware, adminOnly, rejectPencairan);
 
 export default router;

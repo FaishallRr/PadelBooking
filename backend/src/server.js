@@ -15,9 +15,13 @@ import checkoutRoutes from "./routes/checkoutRoutes.js";
 import jadwalRoutes from "./routes/jadwalRoutes.js";
 import walletRoutes from "./routes/walletRoutes.js";
 import refundRoutes from "./routes/refundRoutes.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
+import ulasanRoutes from "./routes/ulasanRoutes.js";
+import notifikasiRoutes from "./routes/notifikasiRoutes.js";
 
 import dashboardMitraRoutes from "./routes/mitra/dashboardMitraRoutes.js";
 import bookingMitraRoutes from "./routes/mitra/bookingMitraRoutes.js";
+import pencairanMitraRoutes from "./routes/mitra/pencairanMitraRoutes.js";
 
 /* =====================
    CRON LOGIC (DIPAKAI VIA HTTP)
@@ -64,8 +68,12 @@ app.use("/api", checkoutRoutes);
 app.use("/api/wallet", walletRoutes);
 app.use("/api/refund", refundRoutes);
 app.use("/api/jadwal", jadwalRoutes);
+app.use("/api/payment", paymentRoutes);
+app.use("/api/ulasan", ulasanRoutes);
+app.use("/api/notifikasi", notifikasiRoutes);
 app.use("/api/mitra", dashboardMitraRoutes);
 app.use("/api/mitra", bookingMitraRoutes);
+app.use("/api/mitra", pencairanMitraRoutes);
 
 /* =====================
    CRON ENDPOINTS (SERVERLESS SAFE)

@@ -176,7 +176,8 @@ export type transaksi_status_pembayaran = (typeof transaksi_status_pembayaran)[k
 export const wallet_tipe: {
   booking: 'booking',
   refund: 'refund',
-  topup: 'topup'
+  topup: 'topup',
+  midtrans: 'midtrans'
 };
 
 export type wallet_tipe = (typeof wallet_tipe)[keyof typeof wallet_tipe]
@@ -190,6 +191,14 @@ export const refund_status: {
 };
 
 export type refund_status = (typeof refund_status)[keyof typeof refund_status]
+
+
+export const pendapatan_status: {
+  belum_cair: 'belum_cair',
+  sudah_cair: 'sudah_cair'
+};
+
+export type pendapatan_status = (typeof pendapatan_status)[keyof typeof pendapatan_status]
 
 
 export const pencairan_status: {
@@ -234,6 +243,10 @@ export const wallet_tipe: typeof $Enums.wallet_tipe
 export type refund_status = $Enums.refund_status
 
 export const refund_status: typeof $Enums.refund_status
+
+export type pendapatan_status = $Enums.pendapatan_status
+
+export const pendapatan_status: typeof $Enums.pendapatan_status
 
 export type pencairan_status = $Enums.pencairan_status
 
@@ -10891,6 +10904,8 @@ export namespace Prisma {
     jadwal_id: number | null
     order_id: number | null
     total_harga: Decimal | null
+    biaya_admin: Decimal | null
+    biaya_mitra: Decimal | null
   }
 
   export type TransaksiSumAggregateOutputType = {
@@ -10900,6 +10915,8 @@ export namespace Prisma {
     jadwal_id: number | null
     order_id: number | null
     total_harga: Decimal | null
+    biaya_admin: Decimal | null
+    biaya_mitra: Decimal | null
   }
 
   export type TransaksiMinAggregateOutputType = {
@@ -10909,7 +10926,12 @@ export namespace Prisma {
     jadwal_id: number | null
     order_id: number | null
     total_harga: Decimal | null
+    biaya_admin: Decimal | null
+    biaya_mitra: Decimal | null
     status_pembayaran: $Enums.transaksi_status_pembayaran | null
+    midtrans_order_id: string | null
+    snap_token: string | null
+    payment_type: string | null
     created_at: Date | null
   }
 
@@ -10920,7 +10942,12 @@ export namespace Prisma {
     jadwal_id: number | null
     order_id: number | null
     total_harga: Decimal | null
+    biaya_admin: Decimal | null
+    biaya_mitra: Decimal | null
     status_pembayaran: $Enums.transaksi_status_pembayaran | null
+    midtrans_order_id: string | null
+    snap_token: string | null
+    payment_type: string | null
     created_at: Date | null
   }
 
@@ -10931,7 +10958,12 @@ export namespace Prisma {
     jadwal_id: number
     order_id: number
     total_harga: number
+    biaya_admin: number
+    biaya_mitra: number
     status_pembayaran: number
+    midtrans_order_id: number
+    snap_token: number
+    payment_type: number
     created_at: number
     _all: number
   }
@@ -10944,6 +10976,8 @@ export namespace Prisma {
     jadwal_id?: true
     order_id?: true
     total_harga?: true
+    biaya_admin?: true
+    biaya_mitra?: true
   }
 
   export type TransaksiSumAggregateInputType = {
@@ -10953,6 +10987,8 @@ export namespace Prisma {
     jadwal_id?: true
     order_id?: true
     total_harga?: true
+    biaya_admin?: true
+    biaya_mitra?: true
   }
 
   export type TransaksiMinAggregateInputType = {
@@ -10962,7 +10998,12 @@ export namespace Prisma {
     jadwal_id?: true
     order_id?: true
     total_harga?: true
+    biaya_admin?: true
+    biaya_mitra?: true
     status_pembayaran?: true
+    midtrans_order_id?: true
+    snap_token?: true
+    payment_type?: true
     created_at?: true
   }
 
@@ -10973,7 +11014,12 @@ export namespace Prisma {
     jadwal_id?: true
     order_id?: true
     total_harga?: true
+    biaya_admin?: true
+    biaya_mitra?: true
     status_pembayaran?: true
+    midtrans_order_id?: true
+    snap_token?: true
+    payment_type?: true
     created_at?: true
   }
 
@@ -10984,7 +11030,12 @@ export namespace Prisma {
     jadwal_id?: true
     order_id?: true
     total_harga?: true
+    biaya_admin?: true
+    biaya_mitra?: true
     status_pembayaran?: true
+    midtrans_order_id?: true
+    snap_token?: true
+    payment_type?: true
     created_at?: true
     _all?: true
   }
@@ -11082,7 +11133,12 @@ export namespace Prisma {
     jadwal_id: number
     order_id: number | null
     total_harga: Decimal
+    biaya_admin: Decimal
+    biaya_mitra: Decimal
     status_pembayaran: $Enums.transaksi_status_pembayaran
+    midtrans_order_id: string | null
+    snap_token: string | null
+    payment_type: string | null
     created_at: Date
     _count: TransaksiCountAggregateOutputType | null
     _avg: TransaksiAvgAggregateOutputType | null
@@ -11112,7 +11168,12 @@ export namespace Prisma {
     jadwal_id?: boolean
     order_id?: boolean
     total_harga?: boolean
+    biaya_admin?: boolean
+    biaya_mitra?: boolean
     status_pembayaran?: boolean
+    midtrans_order_id?: boolean
+    snap_token?: boolean
+    payment_type?: boolean
     created_at?: boolean
     user?: boolean | usersDefaultArgs<ExtArgs>
     lapangan?: boolean | LapanganDefaultArgs<ExtArgs>
@@ -11120,6 +11181,7 @@ export namespace Prisma {
     order?: boolean | transaksi$orderArgs<ExtArgs>
     refund?: boolean | transaksi$refundArgs<ExtArgs>
     sewa_raket?: boolean | transaksi$sewa_raketArgs<ExtArgs>
+    pendapatan_mitra?: boolean | transaksi$pendapatan_mitraArgs<ExtArgs>
     _count?: boolean | TransaksiCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["transaksi"]>
 
@@ -11131,7 +11193,12 @@ export namespace Prisma {
     jadwal_id?: boolean
     order_id?: boolean
     total_harga?: boolean
+    biaya_admin?: boolean
+    biaya_mitra?: boolean
     status_pembayaran?: boolean
+    midtrans_order_id?: boolean
+    snap_token?: boolean
+    payment_type?: boolean
     created_at?: boolean
   }
 
@@ -11142,6 +11209,7 @@ export namespace Prisma {
     order?: boolean | transaksi$orderArgs<ExtArgs>
     refund?: boolean | transaksi$refundArgs<ExtArgs>
     sewa_raket?: boolean | transaksi$sewa_raketArgs<ExtArgs>
+    pendapatan_mitra?: boolean | transaksi$pendapatan_mitraArgs<ExtArgs>
     _count?: boolean | TransaksiCountOutputTypeDefaultArgs<ExtArgs>
   }
 
@@ -11154,6 +11222,7 @@ export namespace Prisma {
       order: Prisma.$order_bookingPayload<ExtArgs> | null
       refund: Prisma.$refundPayload<ExtArgs> | null
       sewa_raket: Prisma.$sewa_raketPayload<ExtArgs>[]
+      pendapatan_mitra: Prisma.$pendapatan_mitraPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -11162,7 +11231,12 @@ export namespace Prisma {
       jadwal_id: number
       order_id: number | null
       total_harga: Prisma.Decimal
+      biaya_admin: Prisma.Decimal
+      biaya_mitra: Prisma.Decimal
       status_pembayaran: $Enums.transaksi_status_pembayaran
+      midtrans_order_id: string | null
+      snap_token: string | null
+      payment_type: string | null
       created_at: Date
     }, ExtArgs["result"]["transaksi"]>
     composites: {}
@@ -11510,6 +11584,7 @@ export namespace Prisma {
     order<T extends transaksi$orderArgs<ExtArgs> = {}>(args?: Subset<T, transaksi$orderArgs<ExtArgs>>): Prisma__order_bookingClient<$Result.GetResult<Prisma.$order_bookingPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     refund<T extends transaksi$refundArgs<ExtArgs> = {}>(args?: Subset<T, transaksi$refundArgs<ExtArgs>>): Prisma__refundClient<$Result.GetResult<Prisma.$refundPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     sewa_raket<T extends transaksi$sewa_raketArgs<ExtArgs> = {}>(args?: Subset<T, transaksi$sewa_raketArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$sewa_raketPayload<ExtArgs>, T, "findMany"> | Null>
+    pendapatan_mitra<T extends transaksi$pendapatan_mitraArgs<ExtArgs> = {}>(args?: Subset<T, transaksi$pendapatan_mitraArgs<ExtArgs>>): Prisma__pendapatan_mitraClient<$Result.GetResult<Prisma.$pendapatan_mitraPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -11545,7 +11620,12 @@ export namespace Prisma {
     readonly jadwal_id: FieldRef<"transaksi", 'Int'>
     readonly order_id: FieldRef<"transaksi", 'Int'>
     readonly total_harga: FieldRef<"transaksi", 'Decimal'>
+    readonly biaya_admin: FieldRef<"transaksi", 'Decimal'>
+    readonly biaya_mitra: FieldRef<"transaksi", 'Decimal'>
     readonly status_pembayaran: FieldRef<"transaksi", 'transaksi_status_pembayaran'>
+    readonly midtrans_order_id: FieldRef<"transaksi", 'String'>
+    readonly snap_token: FieldRef<"transaksi", 'String'>
+    readonly payment_type: FieldRef<"transaksi", 'String'>
     readonly created_at: FieldRef<"transaksi", 'DateTime'>
   }
     
@@ -11893,6 +11973,21 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: Sewa_raketScalarFieldEnum | Sewa_raketScalarFieldEnum[]
+  }
+
+  /**
+   * transaksi.pendapatan_mitra
+   */
+  export type transaksi$pendapatan_mitraArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the pendapatan_mitra
+     */
+    select?: pendapatan_mitraSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: pendapatan_mitraInclude<ExtArgs> | null
+    where?: pendapatan_mitraWhereInput
   }
 
   /**
@@ -18550,6 +18645,7 @@ export namespace Prisma {
     mitra_id: number | null
     transaksi_id: number | null
     jumlah: Decimal | null
+    status: $Enums.pendapatan_status | null
     created_at: Date | null
   }
 
@@ -18558,6 +18654,7 @@ export namespace Prisma {
     mitra_id: number | null
     transaksi_id: number | null
     jumlah: Decimal | null
+    status: $Enums.pendapatan_status | null
     created_at: Date | null
   }
 
@@ -18566,6 +18663,7 @@ export namespace Prisma {
     mitra_id: number
     transaksi_id: number
     jumlah: number
+    status: number
     created_at: number
     _all: number
   }
@@ -18590,6 +18688,7 @@ export namespace Prisma {
     mitra_id?: true
     transaksi_id?: true
     jumlah?: true
+    status?: true
     created_at?: true
   }
 
@@ -18598,6 +18697,7 @@ export namespace Prisma {
     mitra_id?: true
     transaksi_id?: true
     jumlah?: true
+    status?: true
     created_at?: true
   }
 
@@ -18606,6 +18706,7 @@ export namespace Prisma {
     mitra_id?: true
     transaksi_id?: true
     jumlah?: true
+    status?: true
     created_at?: true
     _all?: true
   }
@@ -18701,6 +18802,7 @@ export namespace Prisma {
     mitra_id: number
     transaksi_id: number
     jumlah: Decimal
+    status: $Enums.pendapatan_status
     created_at: Date
     _count: Pendapatan_mitraCountAggregateOutputType | null
     _avg: Pendapatan_mitraAvgAggregateOutputType | null
@@ -18728,8 +18830,10 @@ export namespace Prisma {
     mitra_id?: boolean
     transaksi_id?: boolean
     jumlah?: boolean
+    status?: boolean
     created_at?: boolean
     mitra?: boolean | MitraDefaultArgs<ExtArgs>
+    transaksi?: boolean | transaksiDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["pendapatan_mitra"]>
 
 
@@ -18738,23 +18842,27 @@ export namespace Prisma {
     mitra_id?: boolean
     transaksi_id?: boolean
     jumlah?: boolean
+    status?: boolean
     created_at?: boolean
   }
 
   export type pendapatan_mitraInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     mitra?: boolean | MitraDefaultArgs<ExtArgs>
+    transaksi?: boolean | transaksiDefaultArgs<ExtArgs>
   }
 
   export type $pendapatan_mitraPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "pendapatan_mitra"
     objects: {
       mitra: Prisma.$MitraPayload<ExtArgs>
+      transaksi: Prisma.$transaksiPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
       mitra_id: number
       transaksi_id: number
       jumlah: Prisma.Decimal
+      status: $Enums.pendapatan_status
       created_at: Date
     }, ExtArgs["result"]["pendapatan_mitra"]>
     composites: {}
@@ -19097,6 +19205,7 @@ export namespace Prisma {
   export interface Prisma__pendapatan_mitraClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     mitra<T extends MitraDefaultArgs<ExtArgs> = {}>(args?: Subset<T, MitraDefaultArgs<ExtArgs>>): Prisma__MitraClient<$Result.GetResult<Prisma.$MitraPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    transaksi<T extends transaksiDefaultArgs<ExtArgs> = {}>(args?: Subset<T, transaksiDefaultArgs<ExtArgs>>): Prisma__transaksiClient<$Result.GetResult<Prisma.$transaksiPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -19130,6 +19239,7 @@ export namespace Prisma {
     readonly mitra_id: FieldRef<"pendapatan_mitra", 'Int'>
     readonly transaksi_id: FieldRef<"pendapatan_mitra", 'Int'>
     readonly jumlah: FieldRef<"pendapatan_mitra", 'Decimal'>
+    readonly status: FieldRef<"pendapatan_mitra", 'pendapatan_status'>
     readonly created_at: FieldRef<"pendapatan_mitra", 'DateTime'>
   }
     
@@ -19460,36 +19570,52 @@ export namespace Prisma {
     id: number | null
     mitra_id: number | null
     jumlah: Decimal | null
+    biaya_admin_pencairan: Decimal | null
+    jumlah_diterima: Decimal | null
   }
 
   export type Pencairan_pendapatanSumAggregateOutputType = {
     id: number | null
     mitra_id: number | null
     jumlah: Decimal | null
+    biaya_admin_pencairan: Decimal | null
+    jumlah_diterima: Decimal | null
   }
 
   export type Pencairan_pendapatanMinAggregateOutputType = {
     id: number | null
     mitra_id: number | null
     jumlah: Decimal | null
+    biaya_admin_pencairan: Decimal | null
+    jumlah_diterima: Decimal | null
+    catatan: string | null
     status: $Enums.pencairan_status | null
     created_at: Date | null
+    processed_at: Date | null
   }
 
   export type Pencairan_pendapatanMaxAggregateOutputType = {
     id: number | null
     mitra_id: number | null
     jumlah: Decimal | null
+    biaya_admin_pencairan: Decimal | null
+    jumlah_diterima: Decimal | null
+    catatan: string | null
     status: $Enums.pencairan_status | null
     created_at: Date | null
+    processed_at: Date | null
   }
 
   export type Pencairan_pendapatanCountAggregateOutputType = {
     id: number
     mitra_id: number
     jumlah: number
+    biaya_admin_pencairan: number
+    jumlah_diterima: number
+    catatan: number
     status: number
     created_at: number
+    processed_at: number
     _all: number
   }
 
@@ -19498,36 +19624,52 @@ export namespace Prisma {
     id?: true
     mitra_id?: true
     jumlah?: true
+    biaya_admin_pencairan?: true
+    jumlah_diterima?: true
   }
 
   export type Pencairan_pendapatanSumAggregateInputType = {
     id?: true
     mitra_id?: true
     jumlah?: true
+    biaya_admin_pencairan?: true
+    jumlah_diterima?: true
   }
 
   export type Pencairan_pendapatanMinAggregateInputType = {
     id?: true
     mitra_id?: true
     jumlah?: true
+    biaya_admin_pencairan?: true
+    jumlah_diterima?: true
+    catatan?: true
     status?: true
     created_at?: true
+    processed_at?: true
   }
 
   export type Pencairan_pendapatanMaxAggregateInputType = {
     id?: true
     mitra_id?: true
     jumlah?: true
+    biaya_admin_pencairan?: true
+    jumlah_diterima?: true
+    catatan?: true
     status?: true
     created_at?: true
+    processed_at?: true
   }
 
   export type Pencairan_pendapatanCountAggregateInputType = {
     id?: true
     mitra_id?: true
     jumlah?: true
+    biaya_admin_pencairan?: true
+    jumlah_diterima?: true
+    catatan?: true
     status?: true
     created_at?: true
+    processed_at?: true
     _all?: true
   }
 
@@ -19621,8 +19763,12 @@ export namespace Prisma {
     id: number
     mitra_id: number
     jumlah: Decimal
+    biaya_admin_pencairan: Decimal
+    jumlah_diterima: Decimal
+    catatan: string | null
     status: $Enums.pencairan_status
     created_at: Date
+    processed_at: Date | null
     _count: Pencairan_pendapatanCountAggregateOutputType | null
     _avg: Pencairan_pendapatanAvgAggregateOutputType | null
     _sum: Pencairan_pendapatanSumAggregateOutputType | null
@@ -19648,8 +19794,12 @@ export namespace Prisma {
     id?: boolean
     mitra_id?: boolean
     jumlah?: boolean
+    biaya_admin_pencairan?: boolean
+    jumlah_diterima?: boolean
+    catatan?: boolean
     status?: boolean
     created_at?: boolean
+    processed_at?: boolean
     mitra?: boolean | MitraDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["pencairan_pendapatan"]>
 
@@ -19658,8 +19808,12 @@ export namespace Prisma {
     id?: boolean
     mitra_id?: boolean
     jumlah?: boolean
+    biaya_admin_pencairan?: boolean
+    jumlah_diterima?: boolean
+    catatan?: boolean
     status?: boolean
     created_at?: boolean
+    processed_at?: boolean
   }
 
   export type pencairan_pendapatanInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -19675,8 +19829,12 @@ export namespace Prisma {
       id: number
       mitra_id: number
       jumlah: Prisma.Decimal
+      biaya_admin_pencairan: Prisma.Decimal
+      jumlah_diterima: Prisma.Decimal
+      catatan: string | null
       status: $Enums.pencairan_status
       created_at: Date
+      processed_at: Date | null
     }, ExtArgs["result"]["pencairan_pendapatan"]>
     composites: {}
   }
@@ -20050,8 +20208,12 @@ export namespace Prisma {
     readonly id: FieldRef<"pencairan_pendapatan", 'Int'>
     readonly mitra_id: FieldRef<"pencairan_pendapatan", 'Int'>
     readonly jumlah: FieldRef<"pencairan_pendapatan", 'Decimal'>
+    readonly biaya_admin_pencairan: FieldRef<"pencairan_pendapatan", 'Decimal'>
+    readonly jumlah_diterima: FieldRef<"pencairan_pendapatan", 'Decimal'>
+    readonly catatan: FieldRef<"pencairan_pendapatan", 'String'>
     readonly status: FieldRef<"pencairan_pendapatan", 'pencairan_status'>
     readonly created_at: FieldRef<"pencairan_pendapatan", 'DateTime'>
+    readonly processed_at: FieldRef<"pencairan_pendapatan", 'DateTime'>
   }
     
 
@@ -20506,7 +20668,12 @@ export namespace Prisma {
     jadwal_id: 'jadwal_id',
     order_id: 'order_id',
     total_harga: 'total_harga',
+    biaya_admin: 'biaya_admin',
+    biaya_mitra: 'biaya_mitra',
     status_pembayaran: 'status_pembayaran',
+    midtrans_order_id: 'midtrans_order_id',
+    snap_token: 'snap_token',
+    payment_type: 'payment_type',
     created_at: 'created_at'
   };
 
@@ -20600,6 +20767,7 @@ export namespace Prisma {
     mitra_id: 'mitra_id',
     transaksi_id: 'transaksi_id',
     jumlah: 'jumlah',
+    status: 'status',
     created_at: 'created_at'
   };
 
@@ -20610,8 +20778,12 @@ export namespace Prisma {
     id: 'id',
     mitra_id: 'mitra_id',
     jumlah: 'jumlah',
+    biaya_admin_pencairan: 'biaya_admin_pencairan',
+    jumlah_diterima: 'jumlah_diterima',
+    catatan: 'catatan',
     status: 'status',
-    created_at: 'created_at'
+    created_at: 'created_at',
+    processed_at: 'processed_at'
   };
 
   export type Pencairan_pendapatanScalarFieldEnum = (typeof Pencairan_pendapatanScalarFieldEnum)[keyof typeof Pencairan_pendapatanScalarFieldEnum]
@@ -20756,6 +20928,13 @@ export namespace Prisma {
    * Reference to a field of type 'refund_status'
    */
   export type Enumrefund_statusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'refund_status'>
+    
+
+
+  /**
+   * Reference to a field of type 'pendapatan_status'
+   */
+  export type Enumpendapatan_statusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'pendapatan_status'>
     
 
 
@@ -21459,7 +21638,12 @@ export namespace Prisma {
     jadwal_id?: IntFilter<"transaksi"> | number
     order_id?: IntNullableFilter<"transaksi"> | number | null
     total_harga?: DecimalFilter<"transaksi"> | Decimal | DecimalJsLike | number | string
+    biaya_admin?: DecimalFilter<"transaksi"> | Decimal | DecimalJsLike | number | string
+    biaya_mitra?: DecimalFilter<"transaksi"> | Decimal | DecimalJsLike | number | string
     status_pembayaran?: Enumtransaksi_status_pembayaranFilter<"transaksi"> | $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: StringNullableFilter<"transaksi"> | string | null
+    snap_token?: StringNullableFilter<"transaksi"> | string | null
+    payment_type?: StringNullableFilter<"transaksi"> | string | null
     created_at?: DateTimeFilter<"transaksi"> | Date | string
     user?: XOR<UsersRelationFilter, usersWhereInput>
     lapangan?: XOR<LapanganRelationFilter, LapanganWhereInput>
@@ -21467,6 +21651,7 @@ export namespace Prisma {
     order?: XOR<Order_bookingNullableRelationFilter, order_bookingWhereInput> | null
     refund?: XOR<RefundNullableRelationFilter, refundWhereInput> | null
     sewa_raket?: Sewa_raketListRelationFilter
+    pendapatan_mitra?: XOR<Pendapatan_mitraNullableRelationFilter, pendapatan_mitraWhereInput> | null
   }
 
   export type transaksiOrderByWithRelationInput = {
@@ -21476,7 +21661,12 @@ export namespace Prisma {
     jadwal_id?: SortOrder
     order_id?: SortOrderInput | SortOrder
     total_harga?: SortOrder
+    biaya_admin?: SortOrder
+    biaya_mitra?: SortOrder
     status_pembayaran?: SortOrder
+    midtrans_order_id?: SortOrderInput | SortOrder
+    snap_token?: SortOrderInput | SortOrder
+    payment_type?: SortOrderInput | SortOrder
     created_at?: SortOrder
     user?: usersOrderByWithRelationInput
     lapangan?: LapanganOrderByWithRelationInput
@@ -21484,11 +21674,13 @@ export namespace Prisma {
     order?: order_bookingOrderByWithRelationInput
     refund?: refundOrderByWithRelationInput
     sewa_raket?: sewa_raketOrderByRelationAggregateInput
+    pendapatan_mitra?: pendapatan_mitraOrderByWithRelationInput
   }
 
   export type transaksiWhereUniqueInput = Prisma.AtLeast<{
     id?: number
     order_id?: number
+    midtrans_order_id?: string
     AND?: transaksiWhereInput | transaksiWhereInput[]
     OR?: transaksiWhereInput[]
     NOT?: transaksiWhereInput | transaksiWhereInput[]
@@ -21496,7 +21688,11 @@ export namespace Prisma {
     lapangan_id?: IntFilter<"transaksi"> | number
     jadwal_id?: IntFilter<"transaksi"> | number
     total_harga?: DecimalFilter<"transaksi"> | Decimal | DecimalJsLike | number | string
+    biaya_admin?: DecimalFilter<"transaksi"> | Decimal | DecimalJsLike | number | string
+    biaya_mitra?: DecimalFilter<"transaksi"> | Decimal | DecimalJsLike | number | string
     status_pembayaran?: Enumtransaksi_status_pembayaranFilter<"transaksi"> | $Enums.transaksi_status_pembayaran
+    snap_token?: StringNullableFilter<"transaksi"> | string | null
+    payment_type?: StringNullableFilter<"transaksi"> | string | null
     created_at?: DateTimeFilter<"transaksi"> | Date | string
     user?: XOR<UsersRelationFilter, usersWhereInput>
     lapangan?: XOR<LapanganRelationFilter, LapanganWhereInput>
@@ -21504,7 +21700,8 @@ export namespace Prisma {
     order?: XOR<Order_bookingNullableRelationFilter, order_bookingWhereInput> | null
     refund?: XOR<RefundNullableRelationFilter, refundWhereInput> | null
     sewa_raket?: Sewa_raketListRelationFilter
-  }, "id" | "order_id">
+    pendapatan_mitra?: XOR<Pendapatan_mitraNullableRelationFilter, pendapatan_mitraWhereInput> | null
+  }, "id" | "order_id" | "midtrans_order_id">
 
   export type transaksiOrderByWithAggregationInput = {
     id?: SortOrder
@@ -21513,7 +21710,12 @@ export namespace Prisma {
     jadwal_id?: SortOrder
     order_id?: SortOrderInput | SortOrder
     total_harga?: SortOrder
+    biaya_admin?: SortOrder
+    biaya_mitra?: SortOrder
     status_pembayaran?: SortOrder
+    midtrans_order_id?: SortOrderInput | SortOrder
+    snap_token?: SortOrderInput | SortOrder
+    payment_type?: SortOrderInput | SortOrder
     created_at?: SortOrder
     _count?: transaksiCountOrderByAggregateInput
     _avg?: transaksiAvgOrderByAggregateInput
@@ -21532,7 +21734,12 @@ export namespace Prisma {
     jadwal_id?: IntWithAggregatesFilter<"transaksi"> | number
     order_id?: IntNullableWithAggregatesFilter<"transaksi"> | number | null
     total_harga?: DecimalWithAggregatesFilter<"transaksi"> | Decimal | DecimalJsLike | number | string
+    biaya_admin?: DecimalWithAggregatesFilter<"transaksi"> | Decimal | DecimalJsLike | number | string
+    biaya_mitra?: DecimalWithAggregatesFilter<"transaksi"> | Decimal | DecimalJsLike | number | string
     status_pembayaran?: Enumtransaksi_status_pembayaranWithAggregatesFilter<"transaksi"> | $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: StringNullableWithAggregatesFilter<"transaksi"> | string | null
+    snap_token?: StringNullableWithAggregatesFilter<"transaksi"> | string | null
+    payment_type?: StringNullableWithAggregatesFilter<"transaksi"> | string | null
     created_at?: DateTimeWithAggregatesFilter<"transaksi"> | Date | string
   }
 
@@ -21986,8 +22193,10 @@ export namespace Prisma {
     mitra_id?: IntFilter<"pendapatan_mitra"> | number
     transaksi_id?: IntFilter<"pendapatan_mitra"> | number
     jumlah?: DecimalFilter<"pendapatan_mitra"> | Decimal | DecimalJsLike | number | string
+    status?: Enumpendapatan_statusFilter<"pendapatan_mitra"> | $Enums.pendapatan_status
     created_at?: DateTimeFilter<"pendapatan_mitra"> | Date | string
     mitra?: XOR<MitraRelationFilter, MitraWhereInput>
+    transaksi?: XOR<TransaksiRelationFilter, transaksiWhereInput>
   }
 
   export type pendapatan_mitraOrderByWithRelationInput = {
@@ -21995,27 +22204,32 @@ export namespace Prisma {
     mitra_id?: SortOrder
     transaksi_id?: SortOrder
     jumlah?: SortOrder
+    status?: SortOrder
     created_at?: SortOrder
     mitra?: MitraOrderByWithRelationInput
+    transaksi?: transaksiOrderByWithRelationInput
   }
 
   export type pendapatan_mitraWhereUniqueInput = Prisma.AtLeast<{
     id?: number
+    transaksi_id?: number
     AND?: pendapatan_mitraWhereInput | pendapatan_mitraWhereInput[]
     OR?: pendapatan_mitraWhereInput[]
     NOT?: pendapatan_mitraWhereInput | pendapatan_mitraWhereInput[]
     mitra_id?: IntFilter<"pendapatan_mitra"> | number
-    transaksi_id?: IntFilter<"pendapatan_mitra"> | number
     jumlah?: DecimalFilter<"pendapatan_mitra"> | Decimal | DecimalJsLike | number | string
+    status?: Enumpendapatan_statusFilter<"pendapatan_mitra"> | $Enums.pendapatan_status
     created_at?: DateTimeFilter<"pendapatan_mitra"> | Date | string
     mitra?: XOR<MitraRelationFilter, MitraWhereInput>
-  }, "id">
+    transaksi?: XOR<TransaksiRelationFilter, transaksiWhereInput>
+  }, "id" | "transaksi_id">
 
   export type pendapatan_mitraOrderByWithAggregationInput = {
     id?: SortOrder
     mitra_id?: SortOrder
     transaksi_id?: SortOrder
     jumlah?: SortOrder
+    status?: SortOrder
     created_at?: SortOrder
     _count?: pendapatan_mitraCountOrderByAggregateInput
     _avg?: pendapatan_mitraAvgOrderByAggregateInput
@@ -22032,6 +22246,7 @@ export namespace Prisma {
     mitra_id?: IntWithAggregatesFilter<"pendapatan_mitra"> | number
     transaksi_id?: IntWithAggregatesFilter<"pendapatan_mitra"> | number
     jumlah?: DecimalWithAggregatesFilter<"pendapatan_mitra"> | Decimal | DecimalJsLike | number | string
+    status?: Enumpendapatan_statusWithAggregatesFilter<"pendapatan_mitra"> | $Enums.pendapatan_status
     created_at?: DateTimeWithAggregatesFilter<"pendapatan_mitra"> | Date | string
   }
 
@@ -22042,8 +22257,12 @@ export namespace Prisma {
     id?: IntFilter<"pencairan_pendapatan"> | number
     mitra_id?: IntFilter<"pencairan_pendapatan"> | number
     jumlah?: DecimalFilter<"pencairan_pendapatan"> | Decimal | DecimalJsLike | number | string
+    biaya_admin_pencairan?: DecimalFilter<"pencairan_pendapatan"> | Decimal | DecimalJsLike | number | string
+    jumlah_diterima?: DecimalFilter<"pencairan_pendapatan"> | Decimal | DecimalJsLike | number | string
+    catatan?: StringNullableFilter<"pencairan_pendapatan"> | string | null
     status?: Enumpencairan_statusFilter<"pencairan_pendapatan"> | $Enums.pencairan_status
     created_at?: DateTimeFilter<"pencairan_pendapatan"> | Date | string
+    processed_at?: DateTimeNullableFilter<"pencairan_pendapatan"> | Date | string | null
     mitra?: XOR<MitraRelationFilter, MitraWhereInput>
   }
 
@@ -22051,8 +22270,12 @@ export namespace Prisma {
     id?: SortOrder
     mitra_id?: SortOrder
     jumlah?: SortOrder
+    biaya_admin_pencairan?: SortOrder
+    jumlah_diterima?: SortOrder
+    catatan?: SortOrderInput | SortOrder
     status?: SortOrder
     created_at?: SortOrder
+    processed_at?: SortOrderInput | SortOrder
     mitra?: MitraOrderByWithRelationInput
   }
 
@@ -22063,8 +22286,12 @@ export namespace Prisma {
     NOT?: pencairan_pendapatanWhereInput | pencairan_pendapatanWhereInput[]
     mitra_id?: IntFilter<"pencairan_pendapatan"> | number
     jumlah?: DecimalFilter<"pencairan_pendapatan"> | Decimal | DecimalJsLike | number | string
+    biaya_admin_pencairan?: DecimalFilter<"pencairan_pendapatan"> | Decimal | DecimalJsLike | number | string
+    jumlah_diterima?: DecimalFilter<"pencairan_pendapatan"> | Decimal | DecimalJsLike | number | string
+    catatan?: StringNullableFilter<"pencairan_pendapatan"> | string | null
     status?: Enumpencairan_statusFilter<"pencairan_pendapatan"> | $Enums.pencairan_status
     created_at?: DateTimeFilter<"pencairan_pendapatan"> | Date | string
+    processed_at?: DateTimeNullableFilter<"pencairan_pendapatan"> | Date | string | null
     mitra?: XOR<MitraRelationFilter, MitraWhereInput>
   }, "id">
 
@@ -22072,8 +22299,12 @@ export namespace Prisma {
     id?: SortOrder
     mitra_id?: SortOrder
     jumlah?: SortOrder
+    biaya_admin_pencairan?: SortOrder
+    jumlah_diterima?: SortOrder
+    catatan?: SortOrderInput | SortOrder
     status?: SortOrder
     created_at?: SortOrder
+    processed_at?: SortOrderInput | SortOrder
     _count?: pencairan_pendapatanCountOrderByAggregateInput
     _avg?: pencairan_pendapatanAvgOrderByAggregateInput
     _max?: pencairan_pendapatanMaxOrderByAggregateInput
@@ -22088,8 +22319,12 @@ export namespace Prisma {
     id?: IntWithAggregatesFilter<"pencairan_pendapatan"> | number
     mitra_id?: IntWithAggregatesFilter<"pencairan_pendapatan"> | number
     jumlah?: DecimalWithAggregatesFilter<"pencairan_pendapatan"> | Decimal | DecimalJsLike | number | string
+    biaya_admin_pencairan?: DecimalWithAggregatesFilter<"pencairan_pendapatan"> | Decimal | DecimalJsLike | number | string
+    jumlah_diterima?: DecimalWithAggregatesFilter<"pencairan_pendapatan"> | Decimal | DecimalJsLike | number | string
+    catatan?: StringNullableWithAggregatesFilter<"pencairan_pendapatan"> | string | null
     status?: Enumpencairan_statusWithAggregatesFilter<"pencairan_pendapatan"> | $Enums.pencairan_status
     created_at?: DateTimeWithAggregatesFilter<"pencairan_pendapatan"> | Date | string
+    processed_at?: DateTimeNullableWithAggregatesFilter<"pencairan_pendapatan"> | Date | string | null
   }
 
   export type usersCreateInput = {
@@ -22818,7 +23053,12 @@ export namespace Prisma {
 
   export type transaksiCreateInput = {
     total_harga: Decimal | DecimalJsLike | number | string
+    biaya_admin?: Decimal | DecimalJsLike | number | string
+    biaya_mitra?: Decimal | DecimalJsLike | number | string
     status_pembayaran?: $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: string | null
+    snap_token?: string | null
+    payment_type?: string | null
     created_at?: Date | string
     user: usersCreateNestedOneWithoutTransaksiInput
     lapangan: LapanganCreateNestedOneWithoutTransaksiInput
@@ -22826,6 +23066,7 @@ export namespace Prisma {
     order?: order_bookingCreateNestedOneWithoutTransaksiInput
     refund?: refundCreateNestedOneWithoutTransaksiInput
     sewa_raket?: sewa_raketCreateNestedManyWithoutTransaksiInput
+    pendapatan_mitra?: pendapatan_mitraCreateNestedOneWithoutTransaksiInput
   }
 
   export type transaksiUncheckedCreateInput = {
@@ -22835,15 +23076,26 @@ export namespace Prisma {
     jadwal_id: number
     order_id?: number | null
     total_harga: Decimal | DecimalJsLike | number | string
+    biaya_admin?: Decimal | DecimalJsLike | number | string
+    biaya_mitra?: Decimal | DecimalJsLike | number | string
     status_pembayaran?: $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: string | null
+    snap_token?: string | null
+    payment_type?: string | null
     created_at?: Date | string
     refund?: refundUncheckedCreateNestedOneWithoutTransaksiInput
     sewa_raket?: sewa_raketUncheckedCreateNestedManyWithoutTransaksiInput
+    pendapatan_mitra?: pendapatan_mitraUncheckedCreateNestedOneWithoutTransaksiInput
   }
 
   export type transaksiUpdateInput = {
     total_harga?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_admin?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_mitra?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status_pembayaran?: Enumtransaksi_status_pembayaranFieldUpdateOperationsInput | $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: NullableStringFieldUpdateOperationsInput | string | null
+    snap_token?: NullableStringFieldUpdateOperationsInput | string | null
+    payment_type?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: usersUpdateOneRequiredWithoutTransaksiNestedInput
     lapangan?: LapanganUpdateOneRequiredWithoutTransaksiNestedInput
@@ -22851,6 +23103,7 @@ export namespace Prisma {
     order?: order_bookingUpdateOneWithoutTransaksiNestedInput
     refund?: refundUpdateOneWithoutTransaksiNestedInput
     sewa_raket?: sewa_raketUpdateManyWithoutTransaksiNestedInput
+    pendapatan_mitra?: pendapatan_mitraUpdateOneWithoutTransaksiNestedInput
   }
 
   export type transaksiUncheckedUpdateInput = {
@@ -22860,10 +23113,16 @@ export namespace Prisma {
     jadwal_id?: IntFieldUpdateOperationsInput | number
     order_id?: NullableIntFieldUpdateOperationsInput | number | null
     total_harga?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_admin?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_mitra?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status_pembayaran?: Enumtransaksi_status_pembayaranFieldUpdateOperationsInput | $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: NullableStringFieldUpdateOperationsInput | string | null
+    snap_token?: NullableStringFieldUpdateOperationsInput | string | null
+    payment_type?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     refund?: refundUncheckedUpdateOneWithoutTransaksiNestedInput
     sewa_raket?: sewa_raketUncheckedUpdateManyWithoutTransaksiNestedInput
+    pendapatan_mitra?: pendapatan_mitraUncheckedUpdateOneWithoutTransaksiNestedInput
   }
 
   export type transaksiCreateManyInput = {
@@ -22873,13 +23132,23 @@ export namespace Prisma {
     jadwal_id: number
     order_id?: number | null
     total_harga: Decimal | DecimalJsLike | number | string
+    biaya_admin?: Decimal | DecimalJsLike | number | string
+    biaya_mitra?: Decimal | DecimalJsLike | number | string
     status_pembayaran?: $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: string | null
+    snap_token?: string | null
+    payment_type?: string | null
     created_at?: Date | string
   }
 
   export type transaksiUpdateManyMutationInput = {
     total_harga?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_admin?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_mitra?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status_pembayaran?: Enumtransaksi_status_pembayaranFieldUpdateOperationsInput | $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: NullableStringFieldUpdateOperationsInput | string | null
+    snap_token?: NullableStringFieldUpdateOperationsInput | string | null
+    payment_type?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -22890,7 +23159,12 @@ export namespace Prisma {
     jadwal_id?: IntFieldUpdateOperationsInput | number
     order_id?: NullableIntFieldUpdateOperationsInput | number | null
     total_harga?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_admin?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_mitra?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status_pembayaran?: Enumtransaksi_status_pembayaranFieldUpdateOperationsInput | $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: NullableStringFieldUpdateOperationsInput | string | null
+    snap_token?: NullableStringFieldUpdateOperationsInput | string | null
+    payment_type?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -23298,10 +23572,11 @@ export namespace Prisma {
   }
 
   export type pendapatan_mitraCreateInput = {
-    transaksi_id: number
     jumlah: Decimal | DecimalJsLike | number | string
+    status?: $Enums.pendapatan_status
     created_at?: Date | string
     mitra: MitraCreateNestedOneWithoutPendapatanInput
+    transaksi: transaksiCreateNestedOneWithoutPendapatan_mitraInput
   }
 
   export type pendapatan_mitraUncheckedCreateInput = {
@@ -23309,14 +23584,16 @@ export namespace Prisma {
     mitra_id: number
     transaksi_id: number
     jumlah: Decimal | DecimalJsLike | number | string
+    status?: $Enums.pendapatan_status
     created_at?: Date | string
   }
 
   export type pendapatan_mitraUpdateInput = {
-    transaksi_id?: IntFieldUpdateOperationsInput | number
     jumlah?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: Enumpendapatan_statusFieldUpdateOperationsInput | $Enums.pendapatan_status
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     mitra?: MitraUpdateOneRequiredWithoutPendapatanNestedInput
+    transaksi?: transaksiUpdateOneRequiredWithoutPendapatan_mitraNestedInput
   }
 
   export type pendapatan_mitraUncheckedUpdateInput = {
@@ -23324,6 +23601,7 @@ export namespace Prisma {
     mitra_id?: IntFieldUpdateOperationsInput | number
     transaksi_id?: IntFieldUpdateOperationsInput | number
     jumlah?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: Enumpendapatan_statusFieldUpdateOperationsInput | $Enums.pendapatan_status
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -23332,12 +23610,13 @@ export namespace Prisma {
     mitra_id: number
     transaksi_id: number
     jumlah: Decimal | DecimalJsLike | number | string
+    status?: $Enums.pendapatan_status
     created_at?: Date | string
   }
 
   export type pendapatan_mitraUpdateManyMutationInput = {
-    transaksi_id?: IntFieldUpdateOperationsInput | number
     jumlah?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: Enumpendapatan_statusFieldUpdateOperationsInput | $Enums.pendapatan_status
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -23346,13 +23625,18 @@ export namespace Prisma {
     mitra_id?: IntFieldUpdateOperationsInput | number
     transaksi_id?: IntFieldUpdateOperationsInput | number
     jumlah?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: Enumpendapatan_statusFieldUpdateOperationsInput | $Enums.pendapatan_status
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type pencairan_pendapatanCreateInput = {
     jumlah: Decimal | DecimalJsLike | number | string
+    biaya_admin_pencairan?: Decimal | DecimalJsLike | number | string
+    jumlah_diterima?: Decimal | DecimalJsLike | number | string
+    catatan?: string | null
     status?: $Enums.pencairan_status
     created_at?: Date | string
+    processed_at?: Date | string | null
     mitra: MitraCreateNestedOneWithoutPencairanInput
   }
 
@@ -23360,14 +23644,22 @@ export namespace Prisma {
     id?: number
     mitra_id: number
     jumlah: Decimal | DecimalJsLike | number | string
+    biaya_admin_pencairan?: Decimal | DecimalJsLike | number | string
+    jumlah_diterima?: Decimal | DecimalJsLike | number | string
+    catatan?: string | null
     status?: $Enums.pencairan_status
     created_at?: Date | string
+    processed_at?: Date | string | null
   }
 
   export type pencairan_pendapatanUpdateInput = {
     jumlah?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_admin_pencairan?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    jumlah_diterima?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
     status?: Enumpencairan_statusFieldUpdateOperationsInput | $Enums.pencairan_status
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    processed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mitra?: MitraUpdateOneRequiredWithoutPencairanNestedInput
   }
 
@@ -23375,30 +23667,46 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     mitra_id?: IntFieldUpdateOperationsInput | number
     jumlah?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_admin_pencairan?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    jumlah_diterima?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
     status?: Enumpencairan_statusFieldUpdateOperationsInput | $Enums.pencairan_status
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    processed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type pencairan_pendapatanCreateManyInput = {
     id?: number
     mitra_id: number
     jumlah: Decimal | DecimalJsLike | number | string
+    biaya_admin_pencairan?: Decimal | DecimalJsLike | number | string
+    jumlah_diterima?: Decimal | DecimalJsLike | number | string
+    catatan?: string | null
     status?: $Enums.pencairan_status
     created_at?: Date | string
+    processed_at?: Date | string | null
   }
 
   export type pencairan_pendapatanUpdateManyMutationInput = {
     jumlah?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_admin_pencairan?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    jumlah_diterima?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
     status?: Enumpencairan_statusFieldUpdateOperationsInput | $Enums.pencairan_status
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    processed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type pencairan_pendapatanUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     mitra_id?: IntFieldUpdateOperationsInput | number
     jumlah?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_admin_pencairan?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    jumlah_diterima?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
     status?: Enumpencairan_statusFieldUpdateOperationsInput | $Enums.pencairan_status
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    processed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -24330,6 +24638,11 @@ export namespace Prisma {
     none?: sewa_raketWhereInput
   }
 
+  export type Pendapatan_mitraNullableRelationFilter = {
+    is?: pendapatan_mitraWhereInput | null
+    isNot?: pendapatan_mitraWhereInput | null
+  }
+
   export type sewa_raketOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -24341,7 +24654,12 @@ export namespace Prisma {
     jadwal_id?: SortOrder
     order_id?: SortOrder
     total_harga?: SortOrder
+    biaya_admin?: SortOrder
+    biaya_mitra?: SortOrder
     status_pembayaran?: SortOrder
+    midtrans_order_id?: SortOrder
+    snap_token?: SortOrder
+    payment_type?: SortOrder
     created_at?: SortOrder
   }
 
@@ -24352,6 +24670,8 @@ export namespace Prisma {
     jadwal_id?: SortOrder
     order_id?: SortOrder
     total_harga?: SortOrder
+    biaya_admin?: SortOrder
+    biaya_mitra?: SortOrder
   }
 
   export type transaksiMaxOrderByAggregateInput = {
@@ -24361,7 +24681,12 @@ export namespace Prisma {
     jadwal_id?: SortOrder
     order_id?: SortOrder
     total_harga?: SortOrder
+    biaya_admin?: SortOrder
+    biaya_mitra?: SortOrder
     status_pembayaran?: SortOrder
+    midtrans_order_id?: SortOrder
+    snap_token?: SortOrder
+    payment_type?: SortOrder
     created_at?: SortOrder
   }
 
@@ -24372,7 +24697,12 @@ export namespace Prisma {
     jadwal_id?: SortOrder
     order_id?: SortOrder
     total_harga?: SortOrder
+    biaya_admin?: SortOrder
+    biaya_mitra?: SortOrder
     status_pembayaran?: SortOrder
+    midtrans_order_id?: SortOrder
+    snap_token?: SortOrder
+    payment_type?: SortOrder
     created_at?: SortOrder
   }
 
@@ -24383,6 +24713,8 @@ export namespace Prisma {
     jadwal_id?: SortOrder
     order_id?: SortOrder
     total_harga?: SortOrder
+    biaya_admin?: SortOrder
+    biaya_mitra?: SortOrder
   }
 
   export type Enumtransaksi_status_pembayaranWithAggregatesFilter<$PrismaModel = never> = {
@@ -24728,11 +25060,19 @@ export namespace Prisma {
     rating?: SortOrder
   }
 
+  export type Enumpendapatan_statusFilter<$PrismaModel = never> = {
+    equals?: $Enums.pendapatan_status | Enumpendapatan_statusFieldRefInput<$PrismaModel>
+    in?: $Enums.pendapatan_status[]
+    notIn?: $Enums.pendapatan_status[]
+    not?: NestedEnumpendapatan_statusFilter<$PrismaModel> | $Enums.pendapatan_status
+  }
+
   export type pendapatan_mitraCountOrderByAggregateInput = {
     id?: SortOrder
     mitra_id?: SortOrder
     transaksi_id?: SortOrder
     jumlah?: SortOrder
+    status?: SortOrder
     created_at?: SortOrder
   }
 
@@ -24748,6 +25088,7 @@ export namespace Prisma {
     mitra_id?: SortOrder
     transaksi_id?: SortOrder
     jumlah?: SortOrder
+    status?: SortOrder
     created_at?: SortOrder
   }
 
@@ -24756,6 +25097,7 @@ export namespace Prisma {
     mitra_id?: SortOrder
     transaksi_id?: SortOrder
     jumlah?: SortOrder
+    status?: SortOrder
     created_at?: SortOrder
   }
 
@@ -24764,6 +25106,16 @@ export namespace Prisma {
     mitra_id?: SortOrder
     transaksi_id?: SortOrder
     jumlah?: SortOrder
+  }
+
+  export type Enumpendapatan_statusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.pendapatan_status | Enumpendapatan_statusFieldRefInput<$PrismaModel>
+    in?: $Enums.pendapatan_status[]
+    notIn?: $Enums.pendapatan_status[]
+    not?: NestedEnumpendapatan_statusWithAggregatesFilter<$PrismaModel> | $Enums.pendapatan_status
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumpendapatan_statusFilter<$PrismaModel>
+    _max?: NestedEnumpendapatan_statusFilter<$PrismaModel>
   }
 
   export type Enumpencairan_statusFilter<$PrismaModel = never> = {
@@ -24777,36 +25129,52 @@ export namespace Prisma {
     id?: SortOrder
     mitra_id?: SortOrder
     jumlah?: SortOrder
+    biaya_admin_pencairan?: SortOrder
+    jumlah_diterima?: SortOrder
+    catatan?: SortOrder
     status?: SortOrder
     created_at?: SortOrder
+    processed_at?: SortOrder
   }
 
   export type pencairan_pendapatanAvgOrderByAggregateInput = {
     id?: SortOrder
     mitra_id?: SortOrder
     jumlah?: SortOrder
+    biaya_admin_pencairan?: SortOrder
+    jumlah_diterima?: SortOrder
   }
 
   export type pencairan_pendapatanMaxOrderByAggregateInput = {
     id?: SortOrder
     mitra_id?: SortOrder
     jumlah?: SortOrder
+    biaya_admin_pencairan?: SortOrder
+    jumlah_diterima?: SortOrder
+    catatan?: SortOrder
     status?: SortOrder
     created_at?: SortOrder
+    processed_at?: SortOrder
   }
 
   export type pencairan_pendapatanMinOrderByAggregateInput = {
     id?: SortOrder
     mitra_id?: SortOrder
     jumlah?: SortOrder
+    biaya_admin_pencairan?: SortOrder
+    jumlah_diterima?: SortOrder
+    catatan?: SortOrder
     status?: SortOrder
     created_at?: SortOrder
+    processed_at?: SortOrder
   }
 
   export type pencairan_pendapatanSumOrderByAggregateInput = {
     id?: SortOrder
     mitra_id?: SortOrder
     jumlah?: SortOrder
+    biaya_admin_pencairan?: SortOrder
+    jumlah_diterima?: SortOrder
   }
 
   export type Enumpencairan_statusWithAggregatesFilter<$PrismaModel = never> = {
@@ -25872,6 +26240,12 @@ export namespace Prisma {
     connect?: sewa_raketWhereUniqueInput | sewa_raketWhereUniqueInput[]
   }
 
+  export type pendapatan_mitraCreateNestedOneWithoutTransaksiInput = {
+    create?: XOR<pendapatan_mitraCreateWithoutTransaksiInput, pendapatan_mitraUncheckedCreateWithoutTransaksiInput>
+    connectOrCreate?: pendapatan_mitraCreateOrConnectWithoutTransaksiInput
+    connect?: pendapatan_mitraWhereUniqueInput
+  }
+
   export type refundUncheckedCreateNestedOneWithoutTransaksiInput = {
     create?: XOR<refundCreateWithoutTransaksiInput, refundUncheckedCreateWithoutTransaksiInput>
     connectOrCreate?: refundCreateOrConnectWithoutTransaksiInput
@@ -25883,6 +26257,12 @@ export namespace Prisma {
     connectOrCreate?: sewa_raketCreateOrConnectWithoutTransaksiInput | sewa_raketCreateOrConnectWithoutTransaksiInput[]
     createMany?: sewa_raketCreateManyTransaksiInputEnvelope
     connect?: sewa_raketWhereUniqueInput | sewa_raketWhereUniqueInput[]
+  }
+
+  export type pendapatan_mitraUncheckedCreateNestedOneWithoutTransaksiInput = {
+    create?: XOR<pendapatan_mitraCreateWithoutTransaksiInput, pendapatan_mitraUncheckedCreateWithoutTransaksiInput>
+    connectOrCreate?: pendapatan_mitraCreateOrConnectWithoutTransaksiInput
+    connect?: pendapatan_mitraWhereUniqueInput
   }
 
   export type Enumtransaksi_status_pembayaranFieldUpdateOperationsInput = {
@@ -25947,6 +26327,16 @@ export namespace Prisma {
     deleteMany?: sewa_raketScalarWhereInput | sewa_raketScalarWhereInput[]
   }
 
+  export type pendapatan_mitraUpdateOneWithoutTransaksiNestedInput = {
+    create?: XOR<pendapatan_mitraCreateWithoutTransaksiInput, pendapatan_mitraUncheckedCreateWithoutTransaksiInput>
+    connectOrCreate?: pendapatan_mitraCreateOrConnectWithoutTransaksiInput
+    upsert?: pendapatan_mitraUpsertWithoutTransaksiInput
+    disconnect?: pendapatan_mitraWhereInput | boolean
+    delete?: pendapatan_mitraWhereInput | boolean
+    connect?: pendapatan_mitraWhereUniqueInput
+    update?: XOR<XOR<pendapatan_mitraUpdateToOneWithWhereWithoutTransaksiInput, pendapatan_mitraUpdateWithoutTransaksiInput>, pendapatan_mitraUncheckedUpdateWithoutTransaksiInput>
+  }
+
   export type refundUncheckedUpdateOneWithoutTransaksiNestedInput = {
     create?: XOR<refundCreateWithoutTransaksiInput, refundUncheckedCreateWithoutTransaksiInput>
     connectOrCreate?: refundCreateOrConnectWithoutTransaksiInput
@@ -25969,6 +26359,16 @@ export namespace Prisma {
     update?: sewa_raketUpdateWithWhereUniqueWithoutTransaksiInput | sewa_raketUpdateWithWhereUniqueWithoutTransaksiInput[]
     updateMany?: sewa_raketUpdateManyWithWhereWithoutTransaksiInput | sewa_raketUpdateManyWithWhereWithoutTransaksiInput[]
     deleteMany?: sewa_raketScalarWhereInput | sewa_raketScalarWhereInput[]
+  }
+
+  export type pendapatan_mitraUncheckedUpdateOneWithoutTransaksiNestedInput = {
+    create?: XOR<pendapatan_mitraCreateWithoutTransaksiInput, pendapatan_mitraUncheckedCreateWithoutTransaksiInput>
+    connectOrCreate?: pendapatan_mitraCreateOrConnectWithoutTransaksiInput
+    upsert?: pendapatan_mitraUpsertWithoutTransaksiInput
+    disconnect?: pendapatan_mitraWhereInput | boolean
+    delete?: pendapatan_mitraWhereInput | boolean
+    connect?: pendapatan_mitraWhereUniqueInput
+    update?: XOR<XOR<pendapatan_mitraUpdateToOneWithWhereWithoutTransaksiInput, pendapatan_mitraUpdateWithoutTransaksiInput>, pendapatan_mitraUncheckedUpdateWithoutTransaksiInput>
   }
 
   export type sewa_raketCreateNestedManyWithoutRaketInput = {
@@ -26225,12 +26625,30 @@ export namespace Prisma {
     connect?: MitraWhereUniqueInput
   }
 
+  export type transaksiCreateNestedOneWithoutPendapatan_mitraInput = {
+    create?: XOR<transaksiCreateWithoutPendapatan_mitraInput, transaksiUncheckedCreateWithoutPendapatan_mitraInput>
+    connectOrCreate?: transaksiCreateOrConnectWithoutPendapatan_mitraInput
+    connect?: transaksiWhereUniqueInput
+  }
+
+  export type Enumpendapatan_statusFieldUpdateOperationsInput = {
+    set?: $Enums.pendapatan_status
+  }
+
   export type MitraUpdateOneRequiredWithoutPendapatanNestedInput = {
     create?: XOR<MitraCreateWithoutPendapatanInput, MitraUncheckedCreateWithoutPendapatanInput>
     connectOrCreate?: MitraCreateOrConnectWithoutPendapatanInput
     upsert?: MitraUpsertWithoutPendapatanInput
     connect?: MitraWhereUniqueInput
     update?: XOR<XOR<MitraUpdateToOneWithWhereWithoutPendapatanInput, MitraUpdateWithoutPendapatanInput>, MitraUncheckedUpdateWithoutPendapatanInput>
+  }
+
+  export type transaksiUpdateOneRequiredWithoutPendapatan_mitraNestedInput = {
+    create?: XOR<transaksiCreateWithoutPendapatan_mitraInput, transaksiUncheckedCreateWithoutPendapatan_mitraInput>
+    connectOrCreate?: transaksiCreateOrConnectWithoutPendapatan_mitraInput
+    upsert?: transaksiUpsertWithoutPendapatan_mitraInput
+    connect?: transaksiWhereUniqueInput
+    update?: XOR<XOR<transaksiUpdateToOneWithWhereWithoutPendapatan_mitraInput, transaksiUpdateWithoutPendapatan_mitraInput>, transaksiUncheckedUpdateWithoutPendapatan_mitraInput>
   }
 
   export type MitraCreateNestedOneWithoutPencairanInput = {
@@ -26653,6 +27071,23 @@ export namespace Prisma {
     _max?: NestedEnumrefund_statusFilter<$PrismaModel>
   }
 
+  export type NestedEnumpendapatan_statusFilter<$PrismaModel = never> = {
+    equals?: $Enums.pendapatan_status | Enumpendapatan_statusFieldRefInput<$PrismaModel>
+    in?: $Enums.pendapatan_status[]
+    notIn?: $Enums.pendapatan_status[]
+    not?: NestedEnumpendapatan_statusFilter<$PrismaModel> | $Enums.pendapatan_status
+  }
+
+  export type NestedEnumpendapatan_statusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.pendapatan_status | Enumpendapatan_statusFieldRefInput<$PrismaModel>
+    in?: $Enums.pendapatan_status[]
+    notIn?: $Enums.pendapatan_status[]
+    not?: NestedEnumpendapatan_statusWithAggregatesFilter<$PrismaModel> | $Enums.pendapatan_status
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumpendapatan_statusFilter<$PrismaModel>
+    _max?: NestedEnumpendapatan_statusFilter<$PrismaModel>
+  }
+
   export type NestedEnumpencairan_statusFilter<$PrismaModel = never> = {
     equals?: $Enums.pencairan_status | Enumpencairan_statusFieldRefInput<$PrismaModel>
     in?: $Enums.pencairan_status[]
@@ -26755,13 +27190,19 @@ export namespace Prisma {
 
   export type transaksiCreateWithoutUserInput = {
     total_harga: Decimal | DecimalJsLike | number | string
+    biaya_admin?: Decimal | DecimalJsLike | number | string
+    biaya_mitra?: Decimal | DecimalJsLike | number | string
     status_pembayaran?: $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: string | null
+    snap_token?: string | null
+    payment_type?: string | null
     created_at?: Date | string
     lapangan: LapanganCreateNestedOneWithoutTransaksiInput
     jadwal: JadwalLapanganCreateNestedOneWithoutTransaksiInput
     order?: order_bookingCreateNestedOneWithoutTransaksiInput
     refund?: refundCreateNestedOneWithoutTransaksiInput
     sewa_raket?: sewa_raketCreateNestedManyWithoutTransaksiInput
+    pendapatan_mitra?: pendapatan_mitraCreateNestedOneWithoutTransaksiInput
   }
 
   export type transaksiUncheckedCreateWithoutUserInput = {
@@ -26770,10 +27211,16 @@ export namespace Prisma {
     jadwal_id: number
     order_id?: number | null
     total_harga: Decimal | DecimalJsLike | number | string
+    biaya_admin?: Decimal | DecimalJsLike | number | string
+    biaya_mitra?: Decimal | DecimalJsLike | number | string
     status_pembayaran?: $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: string | null
+    snap_token?: string | null
+    payment_type?: string | null
     created_at?: Date | string
     refund?: refundUncheckedCreateNestedOneWithoutTransaksiInput
     sewa_raket?: sewa_raketUncheckedCreateNestedManyWithoutTransaksiInput
+    pendapatan_mitra?: pendapatan_mitraUncheckedCreateNestedOneWithoutTransaksiInput
   }
 
   export type transaksiCreateOrConnectWithoutUserInput = {
@@ -26988,7 +27435,12 @@ export namespace Prisma {
     jadwal_id?: IntFilter<"transaksi"> | number
     order_id?: IntNullableFilter<"transaksi"> | number | null
     total_harga?: DecimalFilter<"transaksi"> | Decimal | DecimalJsLike | number | string
+    biaya_admin?: DecimalFilter<"transaksi"> | Decimal | DecimalJsLike | number | string
+    biaya_mitra?: DecimalFilter<"transaksi"> | Decimal | DecimalJsLike | number | string
     status_pembayaran?: Enumtransaksi_status_pembayaranFilter<"transaksi"> | $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: StringNullableFilter<"transaksi"> | string | null
+    snap_token?: StringNullableFilter<"transaksi"> | string | null
+    payment_type?: StringNullableFilter<"transaksi"> | string | null
     created_at?: DateTimeFilter<"transaksi"> | Date | string
   }
 
@@ -27194,15 +27646,17 @@ export namespace Prisma {
   }
 
   export type pendapatan_mitraCreateWithoutMitraInput = {
-    transaksi_id: number
     jumlah: Decimal | DecimalJsLike | number | string
+    status?: $Enums.pendapatan_status
     created_at?: Date | string
+    transaksi: transaksiCreateNestedOneWithoutPendapatan_mitraInput
   }
 
   export type pendapatan_mitraUncheckedCreateWithoutMitraInput = {
     id?: number
     transaksi_id: number
     jumlah: Decimal | DecimalJsLike | number | string
+    status?: $Enums.pendapatan_status
     created_at?: Date | string
   }
 
@@ -27218,15 +27672,23 @@ export namespace Prisma {
 
   export type pencairan_pendapatanCreateWithoutMitraInput = {
     jumlah: Decimal | DecimalJsLike | number | string
+    biaya_admin_pencairan?: Decimal | DecimalJsLike | number | string
+    jumlah_diterima?: Decimal | DecimalJsLike | number | string
+    catatan?: string | null
     status?: $Enums.pencairan_status
     created_at?: Date | string
+    processed_at?: Date | string | null
   }
 
   export type pencairan_pendapatanUncheckedCreateWithoutMitraInput = {
     id?: number
     jumlah: Decimal | DecimalJsLike | number | string
+    biaya_admin_pencairan?: Decimal | DecimalJsLike | number | string
+    jumlah_diterima?: Decimal | DecimalJsLike | number | string
+    catatan?: string | null
     status?: $Enums.pencairan_status
     created_at?: Date | string
+    processed_at?: Date | string | null
   }
 
   export type pencairan_pendapatanCreateOrConnectWithoutMitraInput = {
@@ -27347,6 +27809,7 @@ export namespace Prisma {
     mitra_id?: IntFilter<"pendapatan_mitra"> | number
     transaksi_id?: IntFilter<"pendapatan_mitra"> | number
     jumlah?: DecimalFilter<"pendapatan_mitra"> | Decimal | DecimalJsLike | number | string
+    status?: Enumpendapatan_statusFilter<"pendapatan_mitra"> | $Enums.pendapatan_status
     created_at?: DateTimeFilter<"pendapatan_mitra"> | Date | string
   }
 
@@ -27373,8 +27836,12 @@ export namespace Prisma {
     id?: IntFilter<"pencairan_pendapatan"> | number
     mitra_id?: IntFilter<"pencairan_pendapatan"> | number
     jumlah?: DecimalFilter<"pencairan_pendapatan"> | Decimal | DecimalJsLike | number | string
+    biaya_admin_pencairan?: DecimalFilter<"pencairan_pendapatan"> | Decimal | DecimalJsLike | number | string
+    jumlah_diterima?: DecimalFilter<"pencairan_pendapatan"> | Decimal | DecimalJsLike | number | string
+    catatan?: StringNullableFilter<"pencairan_pendapatan"> | string | null
     status?: Enumpencairan_statusFilter<"pencairan_pendapatan"> | $Enums.pencairan_status
     created_at?: DateTimeFilter<"pencairan_pendapatan"> | Date | string
+    processed_at?: DateTimeNullableFilter<"pencairan_pendapatan"> | Date | string | null
   }
 
   export type MitraCreateWithoutLapanganInput = {
@@ -27538,13 +28005,19 @@ export namespace Prisma {
 
   export type transaksiCreateWithoutLapanganInput = {
     total_harga: Decimal | DecimalJsLike | number | string
+    biaya_admin?: Decimal | DecimalJsLike | number | string
+    biaya_mitra?: Decimal | DecimalJsLike | number | string
     status_pembayaran?: $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: string | null
+    snap_token?: string | null
+    payment_type?: string | null
     created_at?: Date | string
     user: usersCreateNestedOneWithoutTransaksiInput
     jadwal: JadwalLapanganCreateNestedOneWithoutTransaksiInput
     order?: order_bookingCreateNestedOneWithoutTransaksiInput
     refund?: refundCreateNestedOneWithoutTransaksiInput
     sewa_raket?: sewa_raketCreateNestedManyWithoutTransaksiInput
+    pendapatan_mitra?: pendapatan_mitraCreateNestedOneWithoutTransaksiInput
   }
 
   export type transaksiUncheckedCreateWithoutLapanganInput = {
@@ -27553,10 +28026,16 @@ export namespace Prisma {
     jadwal_id: number
     order_id?: number | null
     total_harga: Decimal | DecimalJsLike | number | string
+    biaya_admin?: Decimal | DecimalJsLike | number | string
+    biaya_mitra?: Decimal | DecimalJsLike | number | string
     status_pembayaran?: $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: string | null
+    snap_token?: string | null
+    payment_type?: string | null
     created_at?: Date | string
     refund?: refundUncheckedCreateNestedOneWithoutTransaksiInput
     sewa_raket?: sewa_raketUncheckedCreateNestedManyWithoutTransaksiInput
+    pendapatan_mitra?: pendapatan_mitraUncheckedCreateNestedOneWithoutTransaksiInput
   }
 
   export type transaksiCreateOrConnectWithoutLapanganInput = {
@@ -28031,13 +28510,19 @@ export namespace Prisma {
 
   export type transaksiCreateWithoutJadwalInput = {
     total_harga: Decimal | DecimalJsLike | number | string
+    biaya_admin?: Decimal | DecimalJsLike | number | string
+    biaya_mitra?: Decimal | DecimalJsLike | number | string
     status_pembayaran?: $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: string | null
+    snap_token?: string | null
+    payment_type?: string | null
     created_at?: Date | string
     user: usersCreateNestedOneWithoutTransaksiInput
     lapangan: LapanganCreateNestedOneWithoutTransaksiInput
     order?: order_bookingCreateNestedOneWithoutTransaksiInput
     refund?: refundCreateNestedOneWithoutTransaksiInput
     sewa_raket?: sewa_raketCreateNestedManyWithoutTransaksiInput
+    pendapatan_mitra?: pendapatan_mitraCreateNestedOneWithoutTransaksiInput
   }
 
   export type transaksiUncheckedCreateWithoutJadwalInput = {
@@ -28046,10 +28531,16 @@ export namespace Prisma {
     lapangan_id: number
     order_id?: number | null
     total_harga: Decimal | DecimalJsLike | number | string
+    biaya_admin?: Decimal | DecimalJsLike | number | string
+    biaya_mitra?: Decimal | DecimalJsLike | number | string
     status_pembayaran?: $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: string | null
+    snap_token?: string | null
+    payment_type?: string | null
     created_at?: Date | string
     refund?: refundUncheckedCreateNestedOneWithoutTransaksiInput
     sewa_raket?: sewa_raketUncheckedCreateNestedManyWithoutTransaksiInput
+    pendapatan_mitra?: pendapatan_mitraUncheckedCreateNestedOneWithoutTransaksiInput
   }
 
   export type transaksiCreateOrConnectWithoutJadwalInput = {
@@ -28252,13 +28743,19 @@ export namespace Prisma {
 
   export type transaksiCreateWithoutOrderInput = {
     total_harga: Decimal | DecimalJsLike | number | string
+    biaya_admin?: Decimal | DecimalJsLike | number | string
+    biaya_mitra?: Decimal | DecimalJsLike | number | string
     status_pembayaran?: $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: string | null
+    snap_token?: string | null
+    payment_type?: string | null
     created_at?: Date | string
     user: usersCreateNestedOneWithoutTransaksiInput
     lapangan: LapanganCreateNestedOneWithoutTransaksiInput
     jadwal: JadwalLapanganCreateNestedOneWithoutTransaksiInput
     refund?: refundCreateNestedOneWithoutTransaksiInput
     sewa_raket?: sewa_raketCreateNestedManyWithoutTransaksiInput
+    pendapatan_mitra?: pendapatan_mitraCreateNestedOneWithoutTransaksiInput
   }
 
   export type transaksiUncheckedCreateWithoutOrderInput = {
@@ -28267,10 +28764,16 @@ export namespace Prisma {
     lapangan_id: number
     jadwal_id: number
     total_harga: Decimal | DecimalJsLike | number | string
+    biaya_admin?: Decimal | DecimalJsLike | number | string
+    biaya_mitra?: Decimal | DecimalJsLike | number | string
     status_pembayaran?: $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: string | null
+    snap_token?: string | null
+    payment_type?: string | null
     created_at?: Date | string
     refund?: refundUncheckedCreateNestedOneWithoutTransaksiInput
     sewa_raket?: sewa_raketUncheckedCreateNestedManyWithoutTransaksiInput
+    pendapatan_mitra?: pendapatan_mitraUncheckedCreateNestedOneWithoutTransaksiInput
   }
 
   export type transaksiCreateOrConnectWithoutOrderInput = {
@@ -28474,13 +28977,19 @@ export namespace Prisma {
 
   export type transaksiUpdateWithoutOrderInput = {
     total_harga?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_admin?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_mitra?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status_pembayaran?: Enumtransaksi_status_pembayaranFieldUpdateOperationsInput | $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: NullableStringFieldUpdateOperationsInput | string | null
+    snap_token?: NullableStringFieldUpdateOperationsInput | string | null
+    payment_type?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: usersUpdateOneRequiredWithoutTransaksiNestedInput
     lapangan?: LapanganUpdateOneRequiredWithoutTransaksiNestedInput
     jadwal?: JadwalLapanganUpdateOneRequiredWithoutTransaksiNestedInput
     refund?: refundUpdateOneWithoutTransaksiNestedInput
     sewa_raket?: sewa_raketUpdateManyWithoutTransaksiNestedInput
+    pendapatan_mitra?: pendapatan_mitraUpdateOneWithoutTransaksiNestedInput
   }
 
   export type transaksiUncheckedUpdateWithoutOrderInput = {
@@ -28489,10 +28998,16 @@ export namespace Prisma {
     lapangan_id?: IntFieldUpdateOperationsInput | number
     jadwal_id?: IntFieldUpdateOperationsInput | number
     total_harga?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_admin?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_mitra?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status_pembayaran?: Enumtransaksi_status_pembayaranFieldUpdateOperationsInput | $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: NullableStringFieldUpdateOperationsInput | string | null
+    snap_token?: NullableStringFieldUpdateOperationsInput | string | null
+    payment_type?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     refund?: refundUncheckedUpdateOneWithoutTransaksiNestedInput
     sewa_raket?: sewa_raketUncheckedUpdateManyWithoutTransaksiNestedInput
+    pendapatan_mitra?: pendapatan_mitraUncheckedUpdateOneWithoutTransaksiNestedInput
   }
 
   export type refundUpsertWithoutOrderInput = {
@@ -28756,6 +29271,26 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type pendapatan_mitraCreateWithoutTransaksiInput = {
+    jumlah: Decimal | DecimalJsLike | number | string
+    status?: $Enums.pendapatan_status
+    created_at?: Date | string
+    mitra: MitraCreateNestedOneWithoutPendapatanInput
+  }
+
+  export type pendapatan_mitraUncheckedCreateWithoutTransaksiInput = {
+    id?: number
+    mitra_id: number
+    jumlah: Decimal | DecimalJsLike | number | string
+    status?: $Enums.pendapatan_status
+    created_at?: Date | string
+  }
+
+  export type pendapatan_mitraCreateOrConnectWithoutTransaksiInput = {
+    where: pendapatan_mitraWhereUniqueInput
+    create: XOR<pendapatan_mitraCreateWithoutTransaksiInput, pendapatan_mitraUncheckedCreateWithoutTransaksiInput>
+  }
+
   export type usersUpsertWithoutTransaksiInput = {
     update: XOR<usersUpdateWithoutTransaksiInput, usersUncheckedUpdateWithoutTransaksiInput>
     create: XOR<usersCreateWithoutTransaksiInput, usersUncheckedCreateWithoutTransaksiInput>
@@ -28989,6 +29524,32 @@ export namespace Prisma {
     total_harga?: DecimalFilter<"sewa_raket"> | Decimal | DecimalJsLike | number | string
   }
 
+  export type pendapatan_mitraUpsertWithoutTransaksiInput = {
+    update: XOR<pendapatan_mitraUpdateWithoutTransaksiInput, pendapatan_mitraUncheckedUpdateWithoutTransaksiInput>
+    create: XOR<pendapatan_mitraCreateWithoutTransaksiInput, pendapatan_mitraUncheckedCreateWithoutTransaksiInput>
+    where?: pendapatan_mitraWhereInput
+  }
+
+  export type pendapatan_mitraUpdateToOneWithWhereWithoutTransaksiInput = {
+    where?: pendapatan_mitraWhereInput
+    data: XOR<pendapatan_mitraUpdateWithoutTransaksiInput, pendapatan_mitraUncheckedUpdateWithoutTransaksiInput>
+  }
+
+  export type pendapatan_mitraUpdateWithoutTransaksiInput = {
+    jumlah?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: Enumpendapatan_statusFieldUpdateOperationsInput | $Enums.pendapatan_status
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    mitra?: MitraUpdateOneRequiredWithoutPendapatanNestedInput
+  }
+
+  export type pendapatan_mitraUncheckedUpdateWithoutTransaksiInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    mitra_id?: IntFieldUpdateOperationsInput | number
+    jumlah?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: Enumpendapatan_statusFieldUpdateOperationsInput | $Enums.pendapatan_status
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type sewa_raketCreateWithoutRaketInput = {
     jumlah: number
     total_harga: Decimal | DecimalJsLike | number | string
@@ -29030,13 +29591,19 @@ export namespace Prisma {
 
   export type transaksiCreateWithoutSewa_raketInput = {
     total_harga: Decimal | DecimalJsLike | number | string
+    biaya_admin?: Decimal | DecimalJsLike | number | string
+    biaya_mitra?: Decimal | DecimalJsLike | number | string
     status_pembayaran?: $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: string | null
+    snap_token?: string | null
+    payment_type?: string | null
     created_at?: Date | string
     user: usersCreateNestedOneWithoutTransaksiInput
     lapangan: LapanganCreateNestedOneWithoutTransaksiInput
     jadwal: JadwalLapanganCreateNestedOneWithoutTransaksiInput
     order?: order_bookingCreateNestedOneWithoutTransaksiInput
     refund?: refundCreateNestedOneWithoutTransaksiInput
+    pendapatan_mitra?: pendapatan_mitraCreateNestedOneWithoutTransaksiInput
   }
 
   export type transaksiUncheckedCreateWithoutSewa_raketInput = {
@@ -29046,9 +29613,15 @@ export namespace Prisma {
     jadwal_id: number
     order_id?: number | null
     total_harga: Decimal | DecimalJsLike | number | string
+    biaya_admin?: Decimal | DecimalJsLike | number | string
+    biaya_mitra?: Decimal | DecimalJsLike | number | string
     status_pembayaran?: $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: string | null
+    snap_token?: string | null
+    payment_type?: string | null
     created_at?: Date | string
     refund?: refundUncheckedCreateNestedOneWithoutTransaksiInput
+    pendapatan_mitra?: pendapatan_mitraUncheckedCreateNestedOneWithoutTransaksiInput
   }
 
   export type transaksiCreateOrConnectWithoutSewa_raketInput = {
@@ -29085,13 +29658,19 @@ export namespace Prisma {
 
   export type transaksiUpdateWithoutSewa_raketInput = {
     total_harga?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_admin?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_mitra?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status_pembayaran?: Enumtransaksi_status_pembayaranFieldUpdateOperationsInput | $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: NullableStringFieldUpdateOperationsInput | string | null
+    snap_token?: NullableStringFieldUpdateOperationsInput | string | null
+    payment_type?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: usersUpdateOneRequiredWithoutTransaksiNestedInput
     lapangan?: LapanganUpdateOneRequiredWithoutTransaksiNestedInput
     jadwal?: JadwalLapanganUpdateOneRequiredWithoutTransaksiNestedInput
     order?: order_bookingUpdateOneWithoutTransaksiNestedInput
     refund?: refundUpdateOneWithoutTransaksiNestedInput
+    pendapatan_mitra?: pendapatan_mitraUpdateOneWithoutTransaksiNestedInput
   }
 
   export type transaksiUncheckedUpdateWithoutSewa_raketInput = {
@@ -29101,9 +29680,15 @@ export namespace Prisma {
     jadwal_id?: IntFieldUpdateOperationsInput | number
     order_id?: NullableIntFieldUpdateOperationsInput | number | null
     total_harga?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_admin?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_mitra?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status_pembayaran?: Enumtransaksi_status_pembayaranFieldUpdateOperationsInput | $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: NullableStringFieldUpdateOperationsInput | string | null
+    snap_token?: NullableStringFieldUpdateOperationsInput | string | null
+    payment_type?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     refund?: refundUncheckedUpdateOneWithoutTransaksiNestedInput
+    pendapatan_mitra?: pendapatan_mitraUncheckedUpdateOneWithoutTransaksiNestedInput
   }
 
   export type raket_padelUpsertWithoutSewa_raketInput = {
@@ -29447,13 +30032,19 @@ export namespace Prisma {
 
   export type transaksiCreateWithoutRefundInput = {
     total_harga: Decimal | DecimalJsLike | number | string
+    biaya_admin?: Decimal | DecimalJsLike | number | string
+    biaya_mitra?: Decimal | DecimalJsLike | number | string
     status_pembayaran?: $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: string | null
+    snap_token?: string | null
+    payment_type?: string | null
     created_at?: Date | string
     user: usersCreateNestedOneWithoutTransaksiInput
     lapangan: LapanganCreateNestedOneWithoutTransaksiInput
     jadwal: JadwalLapanganCreateNestedOneWithoutTransaksiInput
     order?: order_bookingCreateNestedOneWithoutTransaksiInput
     sewa_raket?: sewa_raketCreateNestedManyWithoutTransaksiInput
+    pendapatan_mitra?: pendapatan_mitraCreateNestedOneWithoutTransaksiInput
   }
 
   export type transaksiUncheckedCreateWithoutRefundInput = {
@@ -29463,9 +30054,15 @@ export namespace Prisma {
     jadwal_id: number
     order_id?: number | null
     total_harga: Decimal | DecimalJsLike | number | string
+    biaya_admin?: Decimal | DecimalJsLike | number | string
+    biaya_mitra?: Decimal | DecimalJsLike | number | string
     status_pembayaran?: $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: string | null
+    snap_token?: string | null
+    payment_type?: string | null
     created_at?: Date | string
     sewa_raket?: sewa_raketUncheckedCreateNestedManyWithoutTransaksiInput
+    pendapatan_mitra?: pendapatan_mitraUncheckedCreateNestedOneWithoutTransaksiInput
   }
 
   export type transaksiCreateOrConnectWithoutRefundInput = {
@@ -29578,13 +30175,19 @@ export namespace Prisma {
 
   export type transaksiUpdateWithoutRefundInput = {
     total_harga?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_admin?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_mitra?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status_pembayaran?: Enumtransaksi_status_pembayaranFieldUpdateOperationsInput | $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: NullableStringFieldUpdateOperationsInput | string | null
+    snap_token?: NullableStringFieldUpdateOperationsInput | string | null
+    payment_type?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: usersUpdateOneRequiredWithoutTransaksiNestedInput
     lapangan?: LapanganUpdateOneRequiredWithoutTransaksiNestedInput
     jadwal?: JadwalLapanganUpdateOneRequiredWithoutTransaksiNestedInput
     order?: order_bookingUpdateOneWithoutTransaksiNestedInput
     sewa_raket?: sewa_raketUpdateManyWithoutTransaksiNestedInput
+    pendapatan_mitra?: pendapatan_mitraUpdateOneWithoutTransaksiNestedInput
   }
 
   export type transaksiUncheckedUpdateWithoutRefundInput = {
@@ -29594,9 +30197,15 @@ export namespace Prisma {
     jadwal_id?: IntFieldUpdateOperationsInput | number
     order_id?: NullableIntFieldUpdateOperationsInput | number | null
     total_harga?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_admin?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_mitra?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status_pembayaran?: Enumtransaksi_status_pembayaranFieldUpdateOperationsInput | $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: NullableStringFieldUpdateOperationsInput | string | null
+    snap_token?: NullableStringFieldUpdateOperationsInput | string | null
+    payment_type?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     sewa_raket?: sewa_raketUncheckedUpdateManyWithoutTransaksiNestedInput
+    pendapatan_mitra?: pendapatan_mitraUncheckedUpdateOneWithoutTransaksiNestedInput
   }
 
   export type order_bookingUpsertWithoutRefundInput = {
@@ -29965,6 +30574,46 @@ export namespace Prisma {
     create: XOR<MitraCreateWithoutPendapatanInput, MitraUncheckedCreateWithoutPendapatanInput>
   }
 
+  export type transaksiCreateWithoutPendapatan_mitraInput = {
+    total_harga: Decimal | DecimalJsLike | number | string
+    biaya_admin?: Decimal | DecimalJsLike | number | string
+    biaya_mitra?: Decimal | DecimalJsLike | number | string
+    status_pembayaran?: $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: string | null
+    snap_token?: string | null
+    payment_type?: string | null
+    created_at?: Date | string
+    user: usersCreateNestedOneWithoutTransaksiInput
+    lapangan: LapanganCreateNestedOneWithoutTransaksiInput
+    jadwal: JadwalLapanganCreateNestedOneWithoutTransaksiInput
+    order?: order_bookingCreateNestedOneWithoutTransaksiInput
+    refund?: refundCreateNestedOneWithoutTransaksiInput
+    sewa_raket?: sewa_raketCreateNestedManyWithoutTransaksiInput
+  }
+
+  export type transaksiUncheckedCreateWithoutPendapatan_mitraInput = {
+    id?: number
+    user_id: number
+    lapangan_id: number
+    jadwal_id: number
+    order_id?: number | null
+    total_harga: Decimal | DecimalJsLike | number | string
+    biaya_admin?: Decimal | DecimalJsLike | number | string
+    biaya_mitra?: Decimal | DecimalJsLike | number | string
+    status_pembayaran?: $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: string | null
+    snap_token?: string | null
+    payment_type?: string | null
+    created_at?: Date | string
+    refund?: refundUncheckedCreateNestedOneWithoutTransaksiInput
+    sewa_raket?: sewa_raketUncheckedCreateNestedManyWithoutTransaksiInput
+  }
+
+  export type transaksiCreateOrConnectWithoutPendapatan_mitraInput = {
+    where: transaksiWhereUniqueInput
+    create: XOR<transaksiCreateWithoutPendapatan_mitraInput, transaksiUncheckedCreateWithoutPendapatan_mitraInput>
+  }
+
   export type MitraUpsertWithoutPendapatanInput = {
     update: XOR<MitraUpdateWithoutPendapatanInput, MitraUncheckedUpdateWithoutPendapatanInput>
     create: XOR<MitraCreateWithoutPendapatanInput, MitraUncheckedCreateWithoutPendapatanInput>
@@ -30007,6 +30656,52 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     lapangan?: LapanganUncheckedUpdateManyWithoutMitraNestedInput
     pencairan?: pencairan_pendapatanUncheckedUpdateManyWithoutMitraNestedInput
+  }
+
+  export type transaksiUpsertWithoutPendapatan_mitraInput = {
+    update: XOR<transaksiUpdateWithoutPendapatan_mitraInput, transaksiUncheckedUpdateWithoutPendapatan_mitraInput>
+    create: XOR<transaksiCreateWithoutPendapatan_mitraInput, transaksiUncheckedCreateWithoutPendapatan_mitraInput>
+    where?: transaksiWhereInput
+  }
+
+  export type transaksiUpdateToOneWithWhereWithoutPendapatan_mitraInput = {
+    where?: transaksiWhereInput
+    data: XOR<transaksiUpdateWithoutPendapatan_mitraInput, transaksiUncheckedUpdateWithoutPendapatan_mitraInput>
+  }
+
+  export type transaksiUpdateWithoutPendapatan_mitraInput = {
+    total_harga?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_admin?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_mitra?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status_pembayaran?: Enumtransaksi_status_pembayaranFieldUpdateOperationsInput | $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: NullableStringFieldUpdateOperationsInput | string | null
+    snap_token?: NullableStringFieldUpdateOperationsInput | string | null
+    payment_type?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: usersUpdateOneRequiredWithoutTransaksiNestedInput
+    lapangan?: LapanganUpdateOneRequiredWithoutTransaksiNestedInput
+    jadwal?: JadwalLapanganUpdateOneRequiredWithoutTransaksiNestedInput
+    order?: order_bookingUpdateOneWithoutTransaksiNestedInput
+    refund?: refundUpdateOneWithoutTransaksiNestedInput
+    sewa_raket?: sewa_raketUpdateManyWithoutTransaksiNestedInput
+  }
+
+  export type transaksiUncheckedUpdateWithoutPendapatan_mitraInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    user_id?: IntFieldUpdateOperationsInput | number
+    lapangan_id?: IntFieldUpdateOperationsInput | number
+    jadwal_id?: IntFieldUpdateOperationsInput | number
+    order_id?: NullableIntFieldUpdateOperationsInput | number | null
+    total_harga?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_admin?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_mitra?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status_pembayaran?: Enumtransaksi_status_pembayaranFieldUpdateOperationsInput | $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: NullableStringFieldUpdateOperationsInput | string | null
+    snap_token?: NullableStringFieldUpdateOperationsInput | string | null
+    payment_type?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    refund?: refundUncheckedUpdateOneWithoutTransaksiNestedInput
+    sewa_raket?: sewa_raketUncheckedUpdateManyWithoutTransaksiNestedInput
   }
 
   export type MitraCreateWithoutPencairanInput = {
@@ -30112,7 +30807,12 @@ export namespace Prisma {
     jadwal_id: number
     order_id?: number | null
     total_harga: Decimal | DecimalJsLike | number | string
+    biaya_admin?: Decimal | DecimalJsLike | number | string
+    biaya_mitra?: Decimal | DecimalJsLike | number | string
     status_pembayaran?: $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: string | null
+    snap_token?: string | null
+    payment_type?: string | null
     created_at?: Date | string
   }
 
@@ -30194,13 +30894,19 @@ export namespace Prisma {
 
   export type transaksiUpdateWithoutUserInput = {
     total_harga?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_admin?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_mitra?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status_pembayaran?: Enumtransaksi_status_pembayaranFieldUpdateOperationsInput | $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: NullableStringFieldUpdateOperationsInput | string | null
+    snap_token?: NullableStringFieldUpdateOperationsInput | string | null
+    payment_type?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     lapangan?: LapanganUpdateOneRequiredWithoutTransaksiNestedInput
     jadwal?: JadwalLapanganUpdateOneRequiredWithoutTransaksiNestedInput
     order?: order_bookingUpdateOneWithoutTransaksiNestedInput
     refund?: refundUpdateOneWithoutTransaksiNestedInput
     sewa_raket?: sewa_raketUpdateManyWithoutTransaksiNestedInput
+    pendapatan_mitra?: pendapatan_mitraUpdateOneWithoutTransaksiNestedInput
   }
 
   export type transaksiUncheckedUpdateWithoutUserInput = {
@@ -30209,10 +30915,16 @@ export namespace Prisma {
     jadwal_id?: IntFieldUpdateOperationsInput | number
     order_id?: NullableIntFieldUpdateOperationsInput | number | null
     total_harga?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_admin?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_mitra?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status_pembayaran?: Enumtransaksi_status_pembayaranFieldUpdateOperationsInput | $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: NullableStringFieldUpdateOperationsInput | string | null
+    snap_token?: NullableStringFieldUpdateOperationsInput | string | null
+    payment_type?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     refund?: refundUncheckedUpdateOneWithoutTransaksiNestedInput
     sewa_raket?: sewa_raketUncheckedUpdateManyWithoutTransaksiNestedInput
+    pendapatan_mitra?: pendapatan_mitraUncheckedUpdateOneWithoutTransaksiNestedInput
   }
 
   export type transaksiUncheckedUpdateManyWithoutUserInput = {
@@ -30221,7 +30933,12 @@ export namespace Prisma {
     jadwal_id?: IntFieldUpdateOperationsInput | number
     order_id?: NullableIntFieldUpdateOperationsInput | number | null
     total_harga?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_admin?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_mitra?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status_pembayaran?: Enumtransaksi_status_pembayaranFieldUpdateOperationsInput | $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: NullableStringFieldUpdateOperationsInput | string | null
+    snap_token?: NullableStringFieldUpdateOperationsInput | string | null
+    payment_type?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -30316,14 +31033,19 @@ export namespace Prisma {
     id?: number
     transaksi_id: number
     jumlah: Decimal | DecimalJsLike | number | string
+    status?: $Enums.pendapatan_status
     created_at?: Date | string
   }
 
   export type pencairan_pendapatanCreateManyMitraInput = {
     id?: number
     jumlah: Decimal | DecimalJsLike | number | string
+    biaya_admin_pencairan?: Decimal | DecimalJsLike | number | string
+    jumlah_diterima?: Decimal | DecimalJsLike | number | string
+    catatan?: string | null
     status?: $Enums.pencairan_status
     created_at?: Date | string
+    processed_at?: Date | string | null
   }
 
   export type LapanganUpdateWithoutMitraInput = {
@@ -30374,15 +31096,17 @@ export namespace Prisma {
   }
 
   export type pendapatan_mitraUpdateWithoutMitraInput = {
-    transaksi_id?: IntFieldUpdateOperationsInput | number
     jumlah?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: Enumpendapatan_statusFieldUpdateOperationsInput | $Enums.pendapatan_status
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    transaksi?: transaksiUpdateOneRequiredWithoutPendapatan_mitraNestedInput
   }
 
   export type pendapatan_mitraUncheckedUpdateWithoutMitraInput = {
     id?: IntFieldUpdateOperationsInput | number
     transaksi_id?: IntFieldUpdateOperationsInput | number
     jumlah?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: Enumpendapatan_statusFieldUpdateOperationsInput | $Enums.pendapatan_status
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -30390,27 +31114,40 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     transaksi_id?: IntFieldUpdateOperationsInput | number
     jumlah?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    status?: Enumpendapatan_statusFieldUpdateOperationsInput | $Enums.pendapatan_status
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type pencairan_pendapatanUpdateWithoutMitraInput = {
     jumlah?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_admin_pencairan?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    jumlah_diterima?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
     status?: Enumpencairan_statusFieldUpdateOperationsInput | $Enums.pencairan_status
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    processed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type pencairan_pendapatanUncheckedUpdateWithoutMitraInput = {
     id?: IntFieldUpdateOperationsInput | number
     jumlah?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_admin_pencairan?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    jumlah_diterima?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
     status?: Enumpencairan_statusFieldUpdateOperationsInput | $Enums.pencairan_status
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    processed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type pencairan_pendapatanUncheckedUpdateManyWithoutMitraInput = {
     id?: IntFieldUpdateOperationsInput | number
     jumlah?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_admin_pencairan?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    jumlah_diterima?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
     status?: Enumpencairan_statusFieldUpdateOperationsInput | $Enums.pencairan_status
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    processed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type LapanganGambarCreateManyLapanganInput = {
@@ -30448,7 +31185,12 @@ export namespace Prisma {
     jadwal_id: number
     order_id?: number | null
     total_harga: Decimal | DecimalJsLike | number | string
+    biaya_admin?: Decimal | DecimalJsLike | number | string
+    biaya_mitra?: Decimal | DecimalJsLike | number | string
     status_pembayaran?: $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: string | null
+    snap_token?: string | null
+    payment_type?: string | null
     created_at?: Date | string
   }
 
@@ -30556,13 +31298,19 @@ export namespace Prisma {
 
   export type transaksiUpdateWithoutLapanganInput = {
     total_harga?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_admin?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_mitra?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status_pembayaran?: Enumtransaksi_status_pembayaranFieldUpdateOperationsInput | $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: NullableStringFieldUpdateOperationsInput | string | null
+    snap_token?: NullableStringFieldUpdateOperationsInput | string | null
+    payment_type?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: usersUpdateOneRequiredWithoutTransaksiNestedInput
     jadwal?: JadwalLapanganUpdateOneRequiredWithoutTransaksiNestedInput
     order?: order_bookingUpdateOneWithoutTransaksiNestedInput
     refund?: refundUpdateOneWithoutTransaksiNestedInput
     sewa_raket?: sewa_raketUpdateManyWithoutTransaksiNestedInput
+    pendapatan_mitra?: pendapatan_mitraUpdateOneWithoutTransaksiNestedInput
   }
 
   export type transaksiUncheckedUpdateWithoutLapanganInput = {
@@ -30571,10 +31319,16 @@ export namespace Prisma {
     jadwal_id?: IntFieldUpdateOperationsInput | number
     order_id?: NullableIntFieldUpdateOperationsInput | number | null
     total_harga?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_admin?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_mitra?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status_pembayaran?: Enumtransaksi_status_pembayaranFieldUpdateOperationsInput | $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: NullableStringFieldUpdateOperationsInput | string | null
+    snap_token?: NullableStringFieldUpdateOperationsInput | string | null
+    payment_type?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     refund?: refundUncheckedUpdateOneWithoutTransaksiNestedInput
     sewa_raket?: sewa_raketUncheckedUpdateManyWithoutTransaksiNestedInput
+    pendapatan_mitra?: pendapatan_mitraUncheckedUpdateOneWithoutTransaksiNestedInput
   }
 
   export type transaksiUncheckedUpdateManyWithoutLapanganInput = {
@@ -30583,7 +31337,12 @@ export namespace Prisma {
     jadwal_id?: IntFieldUpdateOperationsInput | number
     order_id?: NullableIntFieldUpdateOperationsInput | number | null
     total_harga?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_admin?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_mitra?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status_pembayaran?: Enumtransaksi_status_pembayaranFieldUpdateOperationsInput | $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: NullableStringFieldUpdateOperationsInput | string | null
+    snap_token?: NullableStringFieldUpdateOperationsInput | string | null
+    payment_type?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -30631,7 +31390,12 @@ export namespace Prisma {
     lapangan_id: number
     order_id?: number | null
     total_harga: Decimal | DecimalJsLike | number | string
+    biaya_admin?: Decimal | DecimalJsLike | number | string
+    biaya_mitra?: Decimal | DecimalJsLike | number | string
     status_pembayaran?: $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: string | null
+    snap_token?: string | null
+    payment_type?: string | null
     created_at?: Date | string
   }
 
@@ -30687,13 +31451,19 @@ export namespace Prisma {
 
   export type transaksiUpdateWithoutJadwalInput = {
     total_harga?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_admin?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_mitra?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status_pembayaran?: Enumtransaksi_status_pembayaranFieldUpdateOperationsInput | $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: NullableStringFieldUpdateOperationsInput | string | null
+    snap_token?: NullableStringFieldUpdateOperationsInput | string | null
+    payment_type?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: usersUpdateOneRequiredWithoutTransaksiNestedInput
     lapangan?: LapanganUpdateOneRequiredWithoutTransaksiNestedInput
     order?: order_bookingUpdateOneWithoutTransaksiNestedInput
     refund?: refundUpdateOneWithoutTransaksiNestedInput
     sewa_raket?: sewa_raketUpdateManyWithoutTransaksiNestedInput
+    pendapatan_mitra?: pendapatan_mitraUpdateOneWithoutTransaksiNestedInput
   }
 
   export type transaksiUncheckedUpdateWithoutJadwalInput = {
@@ -30702,10 +31472,16 @@ export namespace Prisma {
     lapangan_id?: IntFieldUpdateOperationsInput | number
     order_id?: NullableIntFieldUpdateOperationsInput | number | null
     total_harga?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_admin?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_mitra?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status_pembayaran?: Enumtransaksi_status_pembayaranFieldUpdateOperationsInput | $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: NullableStringFieldUpdateOperationsInput | string | null
+    snap_token?: NullableStringFieldUpdateOperationsInput | string | null
+    payment_type?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     refund?: refundUncheckedUpdateOneWithoutTransaksiNestedInput
     sewa_raket?: sewa_raketUncheckedUpdateManyWithoutTransaksiNestedInput
+    pendapatan_mitra?: pendapatan_mitraUncheckedUpdateOneWithoutTransaksiNestedInput
   }
 
   export type transaksiUncheckedUpdateManyWithoutJadwalInput = {
@@ -30714,7 +31490,12 @@ export namespace Prisma {
     lapangan_id?: IntFieldUpdateOperationsInput | number
     order_id?: NullableIntFieldUpdateOperationsInput | number | null
     total_harga?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_admin?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    biaya_mitra?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status_pembayaran?: Enumtransaksi_status_pembayaranFieldUpdateOperationsInput | $Enums.transaksi_status_pembayaran
+    midtrans_order_id?: NullableStringFieldUpdateOperationsInput | string | null
+    snap_token?: NullableStringFieldUpdateOperationsInput | string | null
+    payment_type?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 

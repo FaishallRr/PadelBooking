@@ -20,7 +20,7 @@ const Poppins = localFont({
 });
 
 const SEWA_RAKET_PRICE = 30000;
-const PPN_RATE = 0.11;
+const ADMIN_FEE_RATE = 0.05;
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 export default function CheckoutPage() {
@@ -250,7 +250,10 @@ export default function CheckoutPage() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ order_id: orderId }),
+          body: JSON.stringify({
+            order_id: orderId,
+            sewa_raket: item.extras?.sewaRaket || false,
+          }),
         });
         const payJson = await payRes.json();
         if (!payRes.ok) throw new Error(payJson.message || "Pembayaran gagal");
@@ -287,8 +290,8 @@ export default function CheckoutPage() {
   const raketTotal =
     cart.filter((i) => i.extras?.sewaRaket).length * SEWA_RAKET_PRICE;
   const dpp = subtotal + raketTotal;
-  const ppn = Math.round(dpp * PPN_RATE);
-  const total = dpp + ppn;
+  const adminFee = Math.round(dpp * ADMIN_FEE_RATE);
+  const total = dpp + adminFee;
 
   return (
     <>
@@ -432,8 +435,8 @@ export default function CheckoutPage() {
               </div>
 
               <div className="flex justify-between text-sm text-gray-600 mb-3">
-                <span>PPN 11%</span>
-                <span>Rp {ppn.toLocaleString("id-ID")}</span>
+                <span>Biaya Layanan (5%)</span>
+                <span>Rp {adminFee.toLocaleString("id-ID")}</span>
               </div>
 
               <motion.div

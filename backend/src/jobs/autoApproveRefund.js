@@ -1,5 +1,6 @@
 import prisma from "../utils/prismaClient.js";
 import dayjs from "dayjs";
+import { createNotification } from "../utils/notificationHelper.js";
 
 export const autoApproveRefundH3 = async () => {
   console.log("⏰ Auto approve refund H-3 running...");
@@ -18,7 +19,11 @@ export const autoApproveRefundH3 = async () => {
       },
     },
     include: {
-      order: true,
+      order: {
+        include: {
+          lapangan: { select: { nama: true } },
+        },
+      },
       transaksi: true,
       user: true,
     },
@@ -41,7 +46,7 @@ export const autoApproveRefundH3 = async () => {
 
         if (!wallet) throw new Error("Wallet tidak ditemukan");
 
-        // 3️⃣ update saldo
+        // 3️⃣ update saldo (jumlah sudah dipotong 10% saat request)
         const updatedWallet = await tx.wallet_user.update({
           where: { id: wallet.id },
           data: {
@@ -86,7 +91,21 @@ export const autoApproveRefundH3 = async () => {
             status_pembayaran: "refund",
           },
         });
+
+        // 7️⃣ Kembalikan jadwal ke tersedia
+        if (refund.order?.jadwalLapanganId) {
+          await tx.jadwalLapangan.update({
+            where: { id: refund.order.jadwalLapanganId },
+            data: { status: "tersedia" },
+          });
+        }
       });
+
+      // Notifikasi
+      await createNotification(
+        refund.user_id,
+        `Refund Rp ${Number(refund.jumlah).toLocaleString("id-ID")} untuk ${refund.order?.lapangan?.nama || "lapangan"} telah disetujui otomatis dan dikembalikan ke wallet.`
+      );
 
       console.log(`✅ Refund #${refund.id} auto-approved`);
     } catch (err) {

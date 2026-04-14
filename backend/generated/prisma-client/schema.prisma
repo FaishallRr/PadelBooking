@@ -181,16 +181,25 @@ model transaksi {
   order_id    Int? @unique
 
   total_harga       Decimal
+  biaya_admin       Decimal                     @default(0)
+  biaya_mitra       Decimal                     @default(0)
   status_pembayaran transaksi_status_pembayaran @default(pending)
-  created_at        DateTime                    @default(now())
+
+  // Midtrans fields
+  midtrans_order_id String? @unique
+  snap_token        String?
+  payment_type      String?
+
+  created_at DateTime @default(now())
 
   user     users          @relation(fields: [user_id], references: [id])
   lapangan Lapangan       @relation(fields: [lapangan_id], references: [id])
   jadwal   JadwalLapangan @relation(fields: [jadwal_id], references: [id])
   order    order_booking? @relation(fields: [order_id], references: [id])
 
-  refund     refund?
-  sewa_raket sewa_raket[]
+  refund           refund?
+  sewa_raket       sewa_raket[]
+  pendapatan_mitra pendapatan_mitra?
 }
 
 //////////////////////
@@ -300,21 +309,27 @@ model ulasan {
 // KEUANGAN MITRA
 //////////////////////
 model pendapatan_mitra {
-  id           Int      @id @default(autoincrement())
+  id           Int               @id @default(autoincrement())
   mitra_id     Int
-  transaksi_id Int
+  transaksi_id Int               @unique
   jumlah       Decimal
-  created_at   DateTime @default(now())
+  status       pendapatan_status @default(belum_cair)
+  created_at   DateTime          @default(now())
 
-  mitra Mitra @relation(fields: [mitra_id], references: [id], onDelete: Cascade)
+  mitra     Mitra     @relation(fields: [mitra_id], references: [id], onDelete: Cascade)
+  transaksi transaksi @relation(fields: [transaksi_id], references: [id], onDelete: Cascade)
 }
 
 model pencairan_pendapatan {
-  id         Int              @id @default(autoincrement())
-  mitra_id   Int
-  jumlah     Decimal
-  status     pencairan_status @default(pending)
-  created_at DateTime         @default(now())
+  id                    Int              @id @default(autoincrement())
+  mitra_id              Int
+  jumlah                Decimal
+  biaya_admin_pencairan Decimal          @default(0)
+  jumlah_diterima       Decimal          @default(0)
+  catatan               String?
+  status                pencairan_status @default(pending)
+  created_at            DateTime         @default(now())
+  processed_at          DateTime?
 
   mitra Mitra @relation(fields: [mitra_id], references: [id], onDelete: Cascade)
 }
@@ -379,8 +394,14 @@ enum pencairan_status {
   ditolak
 }
 
+enum pendapatan_status {
+  belum_cair
+  sudah_cair
+}
+
 enum wallet_tipe {
   booking
   refund
   topup
+  midtrans
 }

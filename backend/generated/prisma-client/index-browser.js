@@ -225,7 +225,12 @@ exports.Prisma.TransaksiScalarFieldEnum = {
   jadwal_id: 'jadwal_id',
   order_id: 'order_id',
   total_harga: 'total_harga',
+  biaya_admin: 'biaya_admin',
+  biaya_mitra: 'biaya_mitra',
   status_pembayaran: 'status_pembayaran',
+  midtrans_order_id: 'midtrans_order_id',
+  snap_token: 'snap_token',
+  payment_type: 'payment_type',
   created_at: 'created_at'
 };
 
@@ -295,6 +300,7 @@ exports.Prisma.Pendapatan_mitraScalarFieldEnum = {
   mitra_id: 'mitra_id',
   transaksi_id: 'transaksi_id',
   jumlah: 'jumlah',
+  status: 'status',
   created_at: 'created_at'
 };
 
@@ -302,8 +308,12 @@ exports.Prisma.Pencairan_pendapatanScalarFieldEnum = {
   id: 'id',
   mitra_id: 'mitra_id',
   jumlah: 'jumlah',
+  biaya_admin_pencairan: 'biaya_admin_pencairan',
+  jumlah_diterima: 'jumlah_diterima',
+  catatan: 'catatan',
   status: 'status',
-  created_at: 'created_at'
+  created_at: 'created_at',
+  processed_at: 'processed_at'
 };
 
 exports.Prisma.SortOrder = {
@@ -363,7 +373,8 @@ exports.transaksi_status_pembayaran = exports.$Enums.transaksi_status_pembayaran
 exports.wallet_tipe = exports.$Enums.wallet_tipe = {
   booking: 'booking',
   refund: 'refund',
-  topup: 'topup'
+  topup: 'topup',
+  midtrans: 'midtrans'
 };
 
 exports.refund_status = exports.$Enums.refund_status = {
@@ -371,6 +382,11 @@ exports.refund_status = exports.$Enums.refund_status = {
   approved: 'approved',
   rejected: 'rejected',
   selesai: 'selesai'
+};
+
+exports.pendapatan_status = exports.$Enums.pendapatan_status = {
+  belum_cair: 'belum_cair',
+  sudah_cair: 'sudah_cair'
 };
 
 exports.pencairan_status = exports.$Enums.pencairan_status = {
