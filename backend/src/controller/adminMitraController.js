@@ -11,7 +11,13 @@ export const getAllMitra = async (req, res) => {
     const mitras = await prisma.mitra.findMany({
       include: {
         user: {
-          select: { id: true, nama: true, email: true, no_hp: true, status: true },
+          select: {
+            id: true,
+            nama: true,
+            email: true,
+            no_hp: true,
+            status: true,
+          },
         },
         lapangan: {
           select: { id: true, nama: true, status: true },
@@ -29,7 +35,10 @@ export const getAllMitra = async (req, res) => {
     });
 
     const data = mitras.map((m) => {
-      const totalPendapatan = m.pendapatan.reduce((sum, p) => sum + Number(p.jumlah), 0);
+      const totalPendapatan = m.pendapatan.reduce(
+        (sum, p) => sum + Number(p.jumlah),
+        0,
+      );
       const pendapatanBelumCair = m.pendapatan
         .filter((p) => p.status === "belum_cair")
         .reduce((sum, p) => sum + Number(p.jumlah), 0);
@@ -82,7 +91,8 @@ export const updateMitraStatus = async (req, res) => {
       include: { user: true },
     });
 
-    if (!mitra) return res.status(404).json({ message: "Mitra tidak ditemukan" });
+    if (!mitra)
+      return res.status(404).json({ message: "Mitra tidak ditemukan" });
 
     await prisma.mitra.update({
       where: { id: mitraId },
@@ -98,10 +108,14 @@ export const updateMitraStatus = async (req, res) => {
     }
 
     // Notifikasi ke mitra
-    const statusLabel = { aktif: "disetujui", pending: "dalam review", ditolak: "ditolak" };
+    const statusLabel = {
+      aktif: "disetujui",
+      pending: "dalam review",
+      ditolak: "ditolak",
+    };
     await createNotification(
       mitra.userId,
-      `Status mitra Anda telah ${statusLabel[status]} oleh admin.`
+      `Status mitra Anda telah ${statusLabel[status]} oleh admin.`,
     );
 
     res.json({ message: `Status mitra berhasil diubah ke ${status}`, status });
@@ -124,7 +138,8 @@ export const getMitraPendapatan = async (req, res) => {
       include: { user: { select: { nama: true } } },
     });
 
-    if (!mitra) return res.status(404).json({ message: "Mitra tidak ditemukan" });
+    if (!mitra)
+      return res.status(404).json({ message: "Mitra tidak ditemukan" });
 
     const pendapatan = await prisma.pendapatan_mitra.findMany({
       where: { mitra_id: mitraId },
@@ -151,7 +166,10 @@ export const getMitraPendapatan = async (req, res) => {
       orderBy: { created_at: "desc" },
     });
 
-    const totalPendapatan = pendapatan.reduce((sum, p) => sum + Number(p.jumlah), 0);
+    const totalPendapatan = pendapatan.reduce(
+      (sum, p) => sum + Number(p.jumlah),
+      0,
+    );
     const belumCair = pendapatan
       .filter((p) => p.status === "belum_cair")
       .reduce((sum, p) => sum + Number(p.jumlah), 0);
@@ -215,7 +233,10 @@ export const getAdminRevenueChart = async (req, res) => {
       total_revenue: val.total,
     }));
 
-    const totalAdminRevenue = transaksis.reduce((sum, t) => sum + Number(t.biaya_admin), 0);
+    const totalAdminRevenue = transaksis.reduce(
+      (sum, t) => sum + Number(t.biaya_admin),
+      0,
+    );
 
     res.json({
       total_admin_revenue: totalAdminRevenue,
@@ -276,12 +297,13 @@ export const getAdminEarningsDashboard = async (req, res) => {
     });
 
     // 4. Count withdrawals by status
-    const [pendingCount, processingCount, approvedCount, rejectedCount] = await Promise.all([
-      prisma.pencairan_pendapatan.count({ where: { status: "pending" } }),
-      prisma.pencairan_pendapatan.count({ where: { status: "diproses" } }),
-      prisma.pencairan_pendapatan.count({ where: { status: "berhasil" } }),
-      prisma.pencairan_pendapatan.count({ where: { status: "ditolak" } }),
-    ]);
+    const [pendingCount, processingCount, approvedCount, rejectedCount] =
+      await Promise.all([
+        prisma.pencairan_pendapatan.count({ where: { status: "pending" } }),
+        prisma.pencairan_pendapatan.count({ where: { status: "diproses" } }),
+        prisma.pencairan_pendapatan.count({ where: { status: "berhasil" } }),
+        prisma.pencairan_pendapatan.count({ where: { status: "ditolak" } }),
+      ]);
 
     // 5. Total amounts by status
     const withdrawalTotals = await prisma.pencairan_pendapatan.groupBy({
@@ -295,7 +317,9 @@ export const getAdminEarningsDashboard = async (req, res) => {
     });
 
     const totalTransactionFees = Number(transactionFees._sum.biaya_admin || 0);
-    const totalWithdrawalFees = Number(withdrawalFees._sum.biaya_admin_pencairan || 0);
+    const totalWithdrawalFees = Number(
+      withdrawalFees._sum.biaya_admin_pencairan || 0,
+    );
     const totalEarnings = totalTransactionFees + totalWithdrawalFees;
 
     return res.json({
@@ -345,7 +369,11 @@ export const getAdminEarningsDashboard = async (req, res) => {
     });
   } catch (err) {
     console.error("ADMIN EARNINGS DASHBOARD ERROR:", err);
-    return res.status(500).json({ message: "Gagal mengambil dashboard pendapatan", error: err.message });
+    return res
+      .status(500)
+      .json({
+        message: "Gagal mengambil dashboard pendapatan",
+        error: err.message,
+      });
   }
 };
-

@@ -39,7 +39,15 @@ export const getAllTransactions = async (req, res) => {
         include: {
           user: { select: { id: true, nama: true, email: true, no_hp: true } },
           lapangan: { select: { id: true, nama: true, lokasi: true } },
-          order: { select: { id: true, tanggal: true, jam_mulai: true, jam_selesai: true, status: true } },
+          order: {
+            select: {
+              id: true,
+              tanggal: true,
+              jam_mulai: true,
+              jam_selesai: true,
+              status: true,
+            },
+          },
         },
         orderBy: { created_at: "desc" },
         take: limitNum,
@@ -83,7 +91,9 @@ export const getAllTransactions = async (req, res) => {
     });
   } catch (err) {
     console.error("getAllTransactions error:", err);
-    return res.status(500).json({ message: "Gagal mengambil transaksi", error: err.message });
+    return res
+      .status(500)
+      .json({ message: "Gagal mengambil transaksi", error: err.message });
   }
 };
 
@@ -98,10 +108,20 @@ export const getTransactionDetail = async (req, res) => {
     const transaksi = await prisma.transaksi.findUnique({
       where: { id: Number(id) },
       include: {
-        user: { select: { id: true, nama: true, email: true, no_hp: true, username: true } },
+        user: {
+          select: {
+            id: true,
+            nama: true,
+            email: true,
+            no_hp: true,
+            username: true,
+          },
+        },
         lapangan: {
           include: {
-            mitra: { include: { user: { select: { nama: true, email: true } } } },
+            mitra: {
+              include: { user: { select: { nama: true, email: true } } },
+            },
           },
         },
         order: {
@@ -127,7 +147,9 @@ export const getTransactionDetail = async (req, res) => {
     });
   } catch (err) {
     console.error("getTransactionDetail error:", err);
-    return res.status(500).json({ message: "Gagal mengambil detail transaksi" });
+    return res
+      .status(500)
+      .json({ message: "Gagal mengambil detail transaksi" });
   }
 };
 
@@ -152,10 +174,22 @@ export const getTransactionStats = async (req, res) => {
       }
     }
 
-    const [successCount, pendingCount, failedCount, totalRevenue, totalAdminFee] = await Promise.all([
-      prisma.transaksi.count({ where: { ...where, status_pembayaran: "berhasil" } }),
-      prisma.transaksi.count({ where: { ...where, status_pembayaran: "pending" } }),
-      prisma.transaksi.count({ where: { ...where, status_pembayaran: "gagal" } }),
+    const [
+      successCount,
+      pendingCount,
+      failedCount,
+      totalRevenue,
+      totalAdminFee,
+    ] = await Promise.all([
+      prisma.transaksi.count({
+        where: { ...where, status_pembayaran: "berhasil" },
+      }),
+      prisma.transaksi.count({
+        where: { ...where, status_pembayaran: "pending" },
+      }),
+      prisma.transaksi.count({
+        where: { ...where, status_pembayaran: "gagal" },
+      }),
       prisma.transaksi.aggregate({
         where: { ...where, status_pembayaran: "berhasil" },
         _sum: { total_harga: true },
@@ -175,7 +209,12 @@ export const getTransactionStats = async (req, res) => {
         total_transactions: successCount + pendingCount + failedCount,
         total_revenue: Number(totalRevenue._sum.total_harga || 0),
         total_admin_fee: Number(totalAdminFee._sum.biaya_admin || 0),
-        average_transaction: successCount > 0 ? Math.round((Number(totalRevenue._sum.total_harga || 0)) / successCount) : 0,
+        average_transaction:
+          successCount > 0
+            ? Math.round(
+                Number(totalRevenue._sum.total_harga || 0) / successCount,
+              )
+            : 0,
       },
     });
   } catch (err) {

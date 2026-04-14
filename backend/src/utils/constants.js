@@ -9,7 +9,7 @@ export const ADMIN_FEE_PERCENT = 0.05;
 export const WITHDRAWAL_FEE_PERCENT = 0.05;
 
 /** Persentase potongan refund (10%) - user dapat 90% */
-export const REFUND_CUT_PERCENT = 0.10;
+export const REFUND_CUT_PERCENT = 0.1;
 
 /** Biaya sewa raket (Rp) */
 export const SEWA_RAKET_PRICE = 30000;
@@ -57,4 +57,3 @@ export function calculateWithdrawalAmounts(amount) {
     netAmount,
   };
 }
-

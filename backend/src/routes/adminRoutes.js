@@ -24,28 +24,56 @@ import {
   approvePencairan,
   rejectPencairan,
 } from "../controller/pencairanController.js";
-import {
-  getAllRefundsAdmin,
-} from "../controller/refundController.js";
+import { getAllRefundsAdmin } from "../controller/refundController.js";
 
 const router = express.Router();
 
 // Dashboard
-router.get("/dashboard/summary", authMiddleware, adminOnly, getAdminDashboardSummary);
+router.get(
+  "/dashboard/summary",
+  authMiddleware,
+  adminOnly,
+  getAdminDashboardSummary,
+);
 router.get("/revenue-chart", authMiddleware, adminOnly, getAdminRevenueChart);
 
 // 💰 EARNINGS DASHBOARD (NEW)
-router.get("/earnings-dashboard", authMiddleware, adminOnly, getAdminEarningsDashboard);
+router.get(
+  "/earnings-dashboard",
+  authMiddleware,
+  adminOnly,
+  getAdminEarningsDashboard,
+);
 
 // 💳 TRANSACTIONS (NEW)
 router.get("/transactions", authMiddleware, adminOnly, getAllTransactions);
-router.get("/transactions/stats/summary", authMiddleware, adminOnly, getTransactionStats);
-router.get("/transactions/:id", authMiddleware, adminOnly, getTransactionDetail);
+router.get(
+  "/transactions/stats/summary",
+  authMiddleware,
+  adminOnly,
+  getTransactionStats,
+);
+router.get(
+  "/transactions/:id",
+  authMiddleware,
+  adminOnly,
+  getTransactionDetail,
+);
 
 // Lapangan
 router.get("/lapangan", authMiddleware, adminOnly, getAllLapanganAdmin);
-router.patch("/lapangan/:slug/toggle-status", authMiddleware, adminOnly, toggleStatusLapanganAdmin);
-router.delete("/lapangan/:slug", authMiddleware, adminOnly, deleteLapanganAdmin);
+router.patch(
+  "/lapangan/:slug/toggle-status",
+  authMiddleware,
+  adminOnly,
+  toggleStatusLapanganAdmin,
+);
+router.delete(
+  "/lapangan/:slug",
+  authMiddleware,
+  adminOnly,
+  deleteLapanganAdmin,
+);
 
 // Refund
 router.get("/refunds", authMiddleware, adminOnly, getAllRefundsAdmin);
@@ -53,7 +81,12 @@ router.get("/refunds", authMiddleware, adminOnly, getAllRefundsAdmin);
 // Mitra Management
 router.get("/mitra", authMiddleware, adminOnly, getAllMitra);
 router.patch("/mitra/:id/status", authMiddleware, adminOnly, updateMitraStatus);
-router.get("/mitra/:id/pendapatan", authMiddleware, adminOnly, getMitraPendapatan);
+router.get(
+  "/mitra/:id/pendapatan",
+  authMiddleware,
+  adminOnly,
+  getMitraPendapatan,
+);
 
 // Pencairan
 router.get("/pencairan", authMiddleware, adminOnly, getAllPencairan);

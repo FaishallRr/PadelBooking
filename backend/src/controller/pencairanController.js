@@ -1,7 +1,10 @@
 // src/controller/pencairanController.js
 import prisma from "../utils/prismaClient.js";
 import { createNotification } from "../utils/notificationHelper.js";
-import { WITHDRAWAL_FEE_PERCENT, calculateWithdrawalAmounts } from "../utils/constants.js";
+import {
+  WITHDRAWAL_FEE_PERCENT,
+  calculateWithdrawalAmounts,
+} from "../utils/constants.js";
 
 // =============================================
 // MITRA: Ajukan Pencairan
@@ -14,18 +17,22 @@ export const requestPencairan = async (req, res) => {
     const { jumlah } = req.body;
 
     if (!jumlah || jumlah <= 0) {
-      return res.status(400).json({ message: "Jumlah pencairan harus lebih dari 0" });
+      return res
+        .status(400)
+        .json({ message: "Jumlah pencairan harus lebih dari 0" });
     }
 
     // Ambil mitra
     const mitra = await prisma.mitra.findUnique({ where: { userId } });
     if (!mitra) return res.status(403).json({ message: "Bukan akun mitra" });
-    if (mitra.status !== "aktif") return res.status(403).json({ message: "Akun mitra belum aktif" });
+    if (mitra.status !== "aktif")
+      return res.status(403).json({ message: "Akun mitra belum aktif" });
 
     // ✅ VALIDATE BANK DETAILS
     if (!mitra.bank_mitra || !mitra.no_rekening_mitra) {
       return res.status(400).json({
-        message: "Data rekening bank belum lengkap. Silakan update data mitra terlebih dahulu.",
+        message:
+          "Data rekening bank belum lengkap. Silakan update data mitra terlebih dahulu.",
         required: ["bank_mitra", "no_rekening_mitra"],
       });
     }
@@ -34,13 +41,19 @@ export const requestPencairan = async (req, res) => {
     const pendapatan = await prisma.pendapatan_mitra.findMany({
       where: { mitra_id: mitra.id, status: "belum_cair" },
     });
-    const saldoTersedia = pendapatan.reduce((sum, p) => sum + Number(p.jumlah), 0);
+    const saldoTersedia = pendapatan.reduce(
+      (sum, p) => sum + Number(p.jumlah),
+      0,
+    );
 
     // Cek pencairan yang masih pending
     const pendingPencairan = await prisma.pencairan_pendapatan.findMany({
       where: { mitra_id: mitra.id, status: { in: ["pending", "diproses"] } },
     });
-    const totalPending = pendingPencairan.reduce((sum, p) => sum + Number(p.jumlah), 0);
+    const totalPending = pendingPencairan.reduce(
+      (sum, p) => sum + Number(p.jumlah),
+      0,
+    );
 
     const saldoAvailable = saldoTersedia - totalPending;
 
@@ -83,7 +96,9 @@ export const requestPencairan = async (req, res) => {
     });
   } catch (err) {
     console.error("REQUEST PENCAIRAN ERROR:", err);
-    res.status(500).json({ message: "Gagal mengajukan pencairan", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Gagal mengajukan pencairan", error: err.message });
   }
 };
 
@@ -93,20 +108,28 @@ export const requestPencairan = async (req, res) => {
 // =============================================
 export const getMyPencairan = async (req, res) => {
   try {
-    const mitra = await prisma.mitra.findUnique({ where: { userId: req.user.id } });
+    const mitra = await prisma.mitra.findUnique({
+      where: { userId: req.user.id },
+    });
     if (!mitra) return res.status(403).json({ message: "Bukan akun mitra" });
 
     // Saldo tersedia
     const pendapatan = await prisma.pendapatan_mitra.findMany({
       where: { mitra_id: mitra.id, status: "belum_cair" },
     });
-    const saldoTersedia = pendapatan.reduce((sum, p) => sum + Number(p.jumlah), 0);
+    const saldoTersedia = pendapatan.reduce(
+      (sum, p) => sum + Number(p.jumlah),
+      0,
+    );
 
     // Pending pencairan
     const pendingPencairan = await prisma.pencairan_pendapatan.findMany({
       where: { mitra_id: mitra.id, status: { in: ["pending", "diproses"] } },
     });
-    const totalPending = pendingPencairan.reduce((sum, p) => sum + Number(p.jumlah), 0);
+    const totalPending = pendingPencairan.reduce(
+      (sum, p) => sum + Number(p.jumlah),
+      0,
+    );
 
     // Riwayat pencairan
     const pencairan = await prisma.pencairan_pendapatan.findMany({
@@ -163,20 +186,24 @@ export const getAllPencairan = async (req, res) => {
 export const approvePencairan = async (req, res) => {
   try {
     const { pencairan_id } = req.body;
-    if (!pencairan_id) return res.status(400).json({ message: "pencairan_id wajib" });
+    if (!pencairan_id)
+      return res.status(400).json({ message: "pencairan_id wajib" });
 
     const pencairan = await prisma.pencairan_pendapatan.findUnique({
       where: { id: Number(pencairan_id) },
       include: { mitra: true },
     });
 
-    if (!pencairan) return res.status(404).json({ message: "Pencairan tidak ditemukan" });
+    if (!pencairan)
+      return res.status(404).json({ message: "Pencairan tidak ditemukan" });
     if (pencairan.status !== "pending") {
       return res.status(400).json({ message: "Pencairan sudah diproses" });
     }
 
     // ✅ USE CONSTANT FOR WITHDRAWAL FEE
-    const biayaAdminPencairan = Math.round(Number(pencairan.jumlah) * WITHDRAWAL_FEE_PERCENT);
+    const biayaAdminPencairan = Math.round(
+      Number(pencairan.jumlah) * WITHDRAWAL_FEE_PERCENT,
+    );
     const jumlahDiterima = Number(pencairan.jumlah) - biayaAdminPencairan;
 
     await prisma.$transaction(async (tx) => {
@@ -215,7 +242,7 @@ export const approvePencairan = async (req, res) => {
     // Notifikasi ke mitra
     await createNotification(
       pencairan.mitra.userId,
-      `Pencairan Rp ${Number(pencairan.jumlah).toLocaleString("id-ID")} disetujui. Diterima: Rp ${jumlahDiterima.toLocaleString("id-ID")} (setelah potongan admin 5%).`
+      `Pencairan Rp ${Number(pencairan.jumlah).toLocaleString("id-ID")} disetujui. Diterima: Rp ${jumlahDiterima.toLocaleString("id-ID")} (setelah potongan admin 5%).`,
     );
 
     res.json({
@@ -238,14 +265,16 @@ export const approvePencairan = async (req, res) => {
 export const rejectPencairan = async (req, res) => {
   try {
     const { pencairan_id, catatan } = req.body;
-    if (!pencairan_id) return res.status(400).json({ message: "pencairan_id wajib" });
+    if (!pencairan_id)
+      return res.status(400).json({ message: "pencairan_id wajib" });
 
     const pencairan = await prisma.pencairan_pendapatan.findUnique({
       where: { id: Number(pencairan_id) },
       include: { mitra: true },
     });
 
-    if (!pencairan) return res.status(404).json({ message: "Pencairan tidak ditemukan" });
+    if (!pencairan)
+      return res.status(404).json({ message: "Pencairan tidak ditemukan" });
     if (pencairan.status !== "pending") {
       return res.status(400).json({ message: "Pencairan sudah diproses" });
     }
@@ -262,7 +291,7 @@ export const rejectPencairan = async (req, res) => {
     // Notifikasi ke mitra
     await createNotification(
       pencairan.mitra.userId,
-      `Pencairan Rp ${Number(pencairan.jumlah).toLocaleString("id-ID")} ditolak. Alasan: ${catatan || "Tidak ada keterangan"}`
+      `Pencairan Rp ${Number(pencairan.jumlah).toLocaleString("id-ID")} ditolak. Alasan: ${catatan || "Tidak ada keterangan"}`,
     );
 
     res.json({ message: "Pencairan ditolak" });
