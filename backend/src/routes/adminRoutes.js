@@ -12,7 +12,13 @@ import {
   updateMitraStatus,
   getMitraPendapatan,
   getAdminRevenueChart,
+  getAdminEarningsDashboard,
 } from "../controller/adminMitraController.js";
+import {
+  getAllTransactions,
+  getTransactionDetail,
+  getTransactionStats,
+} from "../controller/adminTransactionController.js";
 import {
   getAllPencairan,
   approvePencairan,
@@ -27,6 +33,14 @@ const router = express.Router();
 // Dashboard
 router.get("/dashboard/summary", authMiddleware, adminOnly, getAdminDashboardSummary);
 router.get("/revenue-chart", authMiddleware, adminOnly, getAdminRevenueChart);
+
+// 💰 EARNINGS DASHBOARD (NEW)
+router.get("/earnings-dashboard", authMiddleware, adminOnly, getAdminEarningsDashboard);
+
+// 💳 TRANSACTIONS (NEW)
+router.get("/transactions", authMiddleware, adminOnly, getAllTransactions);
+router.get("/transactions/stats/summary", authMiddleware, adminOnly, getTransactionStats);
+router.get("/transactions/:id", authMiddleware, adminOnly, getTransactionDetail);
 
 // Lapangan
 router.get("/lapangan", authMiddleware, adminOnly, getAllLapanganAdmin);

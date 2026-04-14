@@ -5,6 +5,9 @@
 /** Persentase biaya admin dari setiap transaksi (5%) */
 export const ADMIN_FEE_PERCENT = 0.05;
 
+/** Persentase biaya admin untuk withdrawn (5%) */
+export const WITHDRAWAL_FEE_PERCENT = 0.05;
+
 /** Persentase potongan refund (10%) - user dapat 90% */
 export const REFUND_CUT_PERCENT = 0.10;
 
@@ -38,3 +41,20 @@ export function calculatePriceBreakdown(hargaSewa, sewaRaket = false) {
     totalBayar,
   };
 }
+
+/**
+ * Calculate withdrawal amount after fee
+ * @param {number} amount - Total amount to withdraw
+ * @returns {object} { withdrawalFee, netAmount }
+ */
+export function calculateWithdrawalAmounts(amount) {
+  const amountNum = Number(amount);
+  const withdrawalFee = Math.round(amountNum * WITHDRAWAL_FEE_PERCENT);
+  const netAmount = amountNum - withdrawalFee;
+
+  return {
+    withdrawalFee,
+    netAmount,
+  };
+}
+

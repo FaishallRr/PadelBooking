@@ -226,3 +226,126 @@ export const getAdminRevenueChart = async (req, res) => {
     res.status(500).json({ message: "Gagal mengambil grafik revenue" });
   }
 };
+
+/**
+ * GET /api/admin/earnings-dashboard
+ * Dashboard admin melihat total pendapatan dari:
+ * 1. Biaya admin dari transaksi
+ * 2. Biaya admin dari pencairan (fee)
+ * 3. Status pencairan
+ */
+export const getAdminEarningsDashboard = async (req, res) => {
+  try {
+    // 1. Total admin fee dari successful transactions
+    const transactionFees = await prisma.transaksi.aggregate({
+      where: { status_pembayaran: "berhasil" },
+      _sum: { biaya_admin: true },
+    });
+
+    // 2. Total withdrawal fees dari approved withdrawals
+    const withdrawalFees = await prisma.pencairan_pendapatan.aggregate({
+      where: { status: "berhasil" },
+      _sum: { biaya_admin_pencairan: true },
+    });
+
+    // 3. Pending & processing withdrawals
+    const pendingWithdrawals = await prisma.pencairan_pendapatan.findMany({
+      where: { status: "pending" },
+      include: {
+        mitra: {
+          include: {
+            user: { select: { nama: true, email: true } },
+          },
+        },
+      },
+      orderBy: { created_at: "desc" },
+      take: 10,
+    });
+
+    const processingWithdrawals = await prisma.pencairan_pendapatan.findMany({
+      where: { status: "diproses" },
+      include: {
+        mitra: {
+          include: {
+            user: { select: { nama: true, email: true } },
+          },
+        },
+      },
+      orderBy: { created_at: "desc" },
+      take: 10,
+    });
+
+    // 4. Count withdrawals by status
+    const [pendingCount, processingCount, approvedCount, rejectedCount] = await Promise.all([
+      prisma.pencairan_pendapatan.count({ where: { status: "pending" } }),
+      prisma.pencairan_pendapatan.count({ where: { status: "diproses" } }),
+      prisma.pencairan_pendapatan.count({ where: { status: "berhasil" } }),
+      prisma.pencairan_pendapatan.count({ where: { status: "ditolak" } }),
+    ]);
+
+    // 5. Total amounts by status
+    const withdrawalTotals = await prisma.pencairan_pendapatan.groupBy({
+      by: ["status"],
+      _sum: { jumlah: true },
+    });
+
+    const withdrawalMap = {};
+    withdrawalTotals.forEach((item) => {
+      withdrawalMap[item.status] = Number(item._sum.jumlah || 0);
+    });
+
+    const totalTransactionFees = Number(transactionFees._sum.biaya_admin || 0);
+    const totalWithdrawalFees = Number(withdrawalFees._sum.biaya_admin_pencairan || 0);
+    const totalEarnings = totalTransactionFees + totalWithdrawalFees;
+
+    return res.json({
+      message: "Dashboard pendapatan admin",
+      earnings_summary: {
+        total_transaction_fees: totalTransactionFees,
+        total_withdrawal_fees: totalWithdrawalFees,
+        total_earnings: totalEarnings,
+      },
+      withdrawal_status: {
+        pending: {
+          count: pendingCount,
+          total: withdrawalMap.pending || 0,
+          data: pendingWithdrawals.map((w) => ({
+            id: w.id,
+            mitra_nama: w.mitra.user.nama,
+            mitra_email: w.mitra.user.email,
+            jumlah: Number(w.jumlah),
+            created_at: w.created_at,
+          })),
+        },
+        processing: {
+          count: processingCount,
+          total: withdrawalMap.diproses || 0,
+          data: processingWithdrawals.map((w) => ({
+            id: w.id,
+            mitra_nama: w.mitra.user.nama,
+            mitra_email: w.mitra.user.email,
+            jumlah: Number(w.jumlah),
+            created_at: w.created_at,
+          })),
+        },
+        approved: {
+          count: approvedCount,
+          total: withdrawalMap.berhasil || 0,
+        },
+        rejected: {
+          count: rejectedCount,
+          total: withdrawalMap.ditolak || 0,
+        },
+      },
+      stats: {
+        total_pending_withdrawal: withdrawalMap.pending || 0,
+        total_processing_withdrawal: withdrawalMap.diproses || 0,
+        total_approved_withdrawal: withdrawalMap.berhasil || 0,
+      },
+    });
+  } catch (err) {
+    console.error("ADMIN EARNINGS DASHBOARD ERROR:", err);
+    return res.status(500).json({ message: "Gagal mengambil dashboard pendapatan", error: err.message });
+  }
+};
+

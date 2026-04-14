@@ -1,6 +1,7 @@
 // src/controller/pencairanController.js
 import prisma from "../utils/prismaClient.js";
 import { createNotification } from "../utils/notificationHelper.js";
+import { WITHDRAWAL_FEE_PERCENT, calculateWithdrawalAmounts } from "../utils/constants.js";
 
 // =============================================
 // MITRA: Ajukan Pencairan
@@ -20,6 +21,14 @@ export const requestPencairan = async (req, res) => {
     const mitra = await prisma.mitra.findUnique({ where: { userId } });
     if (!mitra) return res.status(403).json({ message: "Bukan akun mitra" });
     if (mitra.status !== "aktif") return res.status(403).json({ message: "Akun mitra belum aktif" });
+
+    // ✅ VALIDATE BANK DETAILS
+    if (!mitra.bank_mitra || !mitra.no_rekening_mitra) {
+      return res.status(400).json({
+        message: "Data rekening bank belum lengkap. Silakan update data mitra terlebih dahulu.",
+        required: ["bank_mitra", "no_rekening_mitra"],
+      });
+    }
 
     // Hitung saldo tersedia (belum dicairkan)
     const pendapatan = await prisma.pendapatan_mitra.findMany({
@@ -42,22 +51,39 @@ export const requestPencairan = async (req, res) => {
       });
     }
 
-    // Buat pencairan
+    // ✅ CALCULATE WITHDRAWAL AMOUNTS (dengan fee)
+    const { withdrawalFee, netAmount } = calculateWithdrawalAmounts(jumlah);
+
+    // ✅ CREATE PENCAIRAN WITH BANK SNAPSHOT
     const pencairan = await prisma.pencairan_pendapatan.create({
       data: {
         mitra_id: mitra.id,
         jumlah,
         status: "pending",
+        bank_name: mitra.bank_mitra, // 🔥 SNAPSHOT BANK DATA
+        account_number: mitra.no_rekening_mitra, // 🔥 SNAPSHOT ACCOUNT
+        // Will be set on approval: biaya_admin_pencairan, jumlah_diterima
       },
     });
 
+    // Return response dengan preview fee calculation
     res.status(201).json({
       message: "Pencairan berhasil diajukan",
-      data: pencairan,
+      data: {
+        id: pencairan.id,
+        jumlah_requested: Number(jumlah),
+        estimated_withdrawal_fee: withdrawalFee,
+        estimated_net_amount: netAmount,
+        bank_name: mitra.bank_mitra,
+        account_number: mitra.no_rekening_mitra,
+        status: pencairan.status,
+        created_at: pencairan.created_at,
+        note: "Fee admin 5% akan dipotong setelah disetujui oleh admin",
+      },
     });
   } catch (err) {
     console.error("REQUEST PENCAIRAN ERROR:", err);
-    res.status(500).json({ message: "Gagal mengajukan pencairan" });
+    res.status(500).json({ message: "Gagal mengajukan pencairan", error: err.message });
   }
 };
 
@@ -149,8 +175,8 @@ export const approvePencairan = async (req, res) => {
       return res.status(400).json({ message: "Pencairan sudah diproses" });
     }
 
-    // Hitung biaya admin pencairan (5%)
-    const biayaAdminPencairan = Math.round(Number(pencairan.jumlah) * 0.05);
+    // ✅ USE CONSTANT FOR WITHDRAWAL FEE
+    const biayaAdminPencairan = Math.round(Number(pencairan.jumlah) * WITHDRAWAL_FEE_PERCENT);
     const jumlahDiterima = Number(pencairan.jumlah) - biayaAdminPencairan;
 
     await prisma.$transaction(async (tx) => {
