@@ -45,12 +45,26 @@ app.use(
       "http://localhost:5000",
     ],
     credentials: true,
-  })
+  }),
 );
 
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+/* =====================
+   TIMEOUT HANDLER (CRITICAL untuk prevent hanging)
+===================== */
+const REQUEST_TIMEOUT = 30000; // 30 seconds
+app.use((req, res, next) => {
+  res.setTimeout(REQUEST_TIMEOUT, () => {
+    console.error(`Request timeout for ${req.method} ${req.path}`);
+    if (!res.headersSent) {
+      res.status(408).json({ error: "Request timeout" });
+    }
+  });
+  next();
+});
 
 /* =====================
    STATIC FILES
@@ -145,6 +159,12 @@ app.use((err, req, res, next) => {
 /* =====================
    EXPORT (WAJIB UNTUK VERCEL)
 ===================== */
-app.listen(process.env.PORT, () => {
-  console.log(`Server is running on port ${process.env.PORT}`);
+const server = app.listen(process.env.PORT || 5000, () => {
+  console.log(`Server is running on port ${process.env.PORT || 5000}`);
 });
+
+// Global timeout untuk connections
+server.keepAliveTimeout = 65000; // Nginx default 60s, jadi set 65s
+server.headersTimeout = 66000;
+
+export default app;
