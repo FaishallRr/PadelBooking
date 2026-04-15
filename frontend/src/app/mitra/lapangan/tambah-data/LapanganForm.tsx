@@ -25,7 +25,7 @@ export default function LapanganForm({ mode, slug }: LapanganFormProps) {
   const [step, setStep] = useState(1);
 
   const [utamaType, setUtamaType] = useState<"server" | "new">(
-    mode === "edit" ? "server" : "new"
+    mode === "edit" ? "server" : "new",
   );
   const [utamaServerIndex, setUtamaServerIndex] = useState<number | null>(null);
   const [utamaNewIndex, setUtamaNewIndex] = useState<number | null>(null);
@@ -77,7 +77,7 @@ export default function LapanganForm({ mode, slug }: LapanganFormProps) {
           {
             headers: { Authorization: `Bearer ${token}` },
             cache: "no-store",
-          }
+          },
         );
 
         if (!backendRes.ok) throw new Error("Gagal ambil data lapangan");
@@ -124,7 +124,7 @@ export default function LapanganForm({ mode, slug }: LapanganFormProps) {
       } catch (err: any) {
         showNotification(
           "error",
-          err.message || "Gagal mengambil data lapangan"
+          err.message || "Gagal mengambil data lapangan",
         );
       }
     };
@@ -140,7 +140,7 @@ export default function LapanganForm({ mode, slug }: LapanganFormProps) {
 
   const toggleFasilitas = (f: string) => {
     setSelectedFasilitas((prev) =>
-      prev.includes(f) ? prev.filter((item) => item !== f) : [...prev, f]
+      prev.includes(f) ? prev.filter((item) => item !== f) : [...prev, f],
     );
   };
 
@@ -156,7 +156,7 @@ export default function LapanganForm({ mode, slug }: LapanganFormProps) {
     setDragActive(false);
 
     const files = Array.from(e.dataTransfer.files).filter((f) =>
-      f.type.startsWith("image/")
+      f.type.startsWith("image/"),
     );
 
     // 🔒 VALIDASI MAX 6 FOTO
@@ -185,7 +185,7 @@ export default function LapanganForm({ mode, slug }: LapanganFormProps) {
     if (!e.target.files) return;
 
     const files = Array.from(e.target.files).filter((f) =>
-      f.type.startsWith("image/")
+      f.type.startsWith("image/"),
     );
 
     // 🔒 VALIDASI MAX 6 FOTO
@@ -302,7 +302,7 @@ export default function LapanganForm({ mode, slug }: LapanganFormProps) {
       if (isEdit) {
         formData.append(
           "existingGambar",
-          JSON.stringify(serverPreviews.map((img) => img.url.split("/").pop()))
+          JSON.stringify(serverPreviews.map((img) => img.url.split("/").pop())),
         );
       }
 
@@ -345,7 +345,7 @@ export default function LapanganForm({ mode, slug }: LapanganFormProps) {
 
       showNotification(
         "success",
-        isEdit ? "Lapangan berhasil diperbarui!" : "Lapangan berhasil dibuat!"
+        isEdit ? "Lapangan berhasil diperbarui!" : "Lapangan berhasil dibuat!",
       );
 
       setTimeout(() => {
@@ -530,7 +530,7 @@ export default function LapanganForm({ mode, slug }: LapanganFormProps) {
                 if (!namaLapangan || !lokasi || !harga) {
                   showNotification(
                     "error",
-                    "Semua field di step 1 harus diisi!"
+                    "Semua field di step 1 harus diisi!",
                   );
                   return;
                 }
@@ -743,7 +743,7 @@ export default function LapanganForm({ mode, slug }: LapanganFormProps) {
                   ) {
                     showNotification(
                       "error",
-                      "Semua field di step 2 harus diisi!"
+                      "Semua field di step 2 harus diisi!",
                     );
                     return;
                   }
@@ -961,7 +961,7 @@ export default function LapanganForm({ mode, slug }: LapanganFormProps) {
                   if (totalImages < 3) {
                     showNotification(
                       "error",
-                      "Minimal harus ada 3 foto lapangan"
+                      "Minimal harus ada 3 foto lapangan",
                     );
                     return;
                   }

@@ -4,6 +4,16 @@ import bcrypt from "bcrypt";
 async function main() {
   console.log("🌱 Starting seeder...");
 
+  // ========== CLEANUP PREVIOUS TEST DATA ==========
+  console.log("🧹 Cleaning up previous test data...");
+  await prisma.order_booking.deleteMany({});
+  await prisma.transaksi.deleteMany({});
+  await prisma.pendapatan_mitra.deleteMany({});
+  await prisma.notifikasi.deleteMany({});
+  await prisma.ulasan.deleteMany({});
+  await prisma.jadwalLapangan.deleteMany({});
+  console.log("✅ Cleanup complete");
+
   // ========== USERS ==========
   console.log("📝 Creating users...");
 
