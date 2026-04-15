@@ -95,6 +95,7 @@ if [ ! -z "$USER_TOKEN" ]; then
     echo "   Token: ${USER_TOKEN:0:20}..."
 else
     echo -e "${RED}❌ User Login Failed${NC}"
+    echo "   Response: $USER_LOGIN"
     exit 1
 fi
 
@@ -119,8 +120,7 @@ echo ""
 
 # Get available jadwal
 echo "Fetching available jadwal..."
-TOMORROW=$(date -d "+1 day" +%Y-%m-%d)
-JADWAL=$(curl -s -X GET "$API_URL/api/jadwal/available?tanggal=$TOMORROW&lapangan_id=$LAPANGAN_ID" \
+JADWAL=$(curl -s -X GET "$API_URL/api/jadwal?lapangan_id=$LAPANGAN_ID" \
   -H "Authorization: Bearer $USER_TOKEN")
 
 JADWAL_ID=$(echo "$JADWAL" | grep -o '"id":[0-9]*' | head -1 | cut -d':' -f2)
