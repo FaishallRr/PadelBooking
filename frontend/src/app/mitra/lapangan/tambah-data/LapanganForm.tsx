@@ -200,7 +200,10 @@ export default function LapanganForm({ mode, slug }: LapanganFormProps) {
   const openFileDialog = () => fileInputRef.current?.click();
   const removeFile = (idx: number, isServer = false) => {
     if (isServer) {
-      setDeletedImages((prev) => [...prev, serverPreviews[idx].url]);
+      // Extract filename from URL (e.g., "http://localhost:5000/img/lapangan/file.jpg" -> "file.jpg")
+      const fullUrl = serverPreviews[idx].url;
+      const filename = fullUrl.split("/").pop() || fullUrl;
+      setDeletedImages((prev) => [...prev, filename]);
 
       const newList = serverPreviews.filter((_, i) => i !== idx);
       setServerPreviews(newList);
