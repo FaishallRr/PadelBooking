@@ -8,10 +8,13 @@ import { authMiddleware } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
+// GET /api/booking - alias untuk /my (get user's bookings)
+router.get("/", authMiddleware, getMyBooking);
+
 // POST /api/booking
 router.post("/", authMiddleware, createBooking);
 
-// GET /api/booking/my
+// GET /api/booking/my (alternative endpoint)
 router.get("/my", authMiddleware, getMyBooking);
 
 // 🔥 GET /api/booking/lapangan/:lapanganId
